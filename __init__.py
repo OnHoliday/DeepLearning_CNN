@@ -2,6 +2,7 @@ import os
 from utils import *
 from cnn import CnnSolver
 from plots import plot_new_pred
+
 os.chdir('D:\DeepLearningProject')
 
 

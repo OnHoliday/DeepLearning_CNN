@@ -142,8 +142,14 @@ def make_new_prediction_ethnicity(classifier):
 
     return prediction, path
 
-def make_new_prediction_gender(classifier, path):
-    path1 = r'D:\DeepLearningProject\part2\24_0_1_20170113133945657.jpg'
+def make_new_prediction_gender(classifier):
+    wd = get_current_directory()
+    path1 = wd + '\part2\\'
+
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    random_pic = random.choice(onlyfiles)
+    path = wd + '\part2\\' + random_pic
+
     test_image = image.load_img(path1, target_size=(64, 64))
     test_image = image.img_to_array(test_image)
     test_image = np.expand_dims(test_image, axis=0)
