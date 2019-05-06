@@ -86,7 +86,10 @@ class CnnSolver():
         if iFcallbacks:
             csv_logger = create_cv_logger()
             history = callback_history()
-            callbacks = [csv_logger, history]
+            earlyStop = callbackEarlyStopping()
+            checkPoint = callbackCheckpoint(self.model_name)
+            tensor = callbackTensor()
+            callbacks = [csv_logger, history, earlyStop, checkPoint, tensor]
 
             history = self.model.fit_generator(training_set,
                                      steps_per_epoch=steps_per_epoch,

@@ -6,7 +6,7 @@ from os.path import isfile, join
 import pandas as pd
 from keras import callbacks
 import time
-from keras.callbacks import CSVLogger
+from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint, TensorBoard
 from keras.preprocessing.image import ImageDataGenerator
 import random
 
@@ -79,6 +79,19 @@ def callback_history():
             self.losses.append(logs.get('loss'))
     history = LossHistory()
     return history
+
+def callbackEarlyStopping():
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2, min_delta=1)
+    return es
+
+def callbackCheckpoint(model_name):
+    model_name_h5 = model_name + '_checkPoint.h5'
+    mc = ModelCheckpoint(model_name, monitor='val_loss', mode='min', save_best_only=True)
+    return mc
+
+def callbackTensor():
+    tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
+    return tb
 
 def create_cv_logger():
     wd = get_current_directory()
