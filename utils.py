@@ -24,7 +24,7 @@ def prepare_input_data(path, nr_of_examples):
 
     onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
 
-    df = pd.DataFrame(columns=['age', 'gender', 'ethnic', 'file_name'])
+    df = pd.DataFrame(columns=['age', 'gender', 'ethnic','file_name'])
     index = 0
     for item in onlyfiles:
         if index < nr_of_examples:
@@ -110,11 +110,8 @@ def create_trainingDataGenerator_instance():
     return train_datagen
 
 def create_testingDataGenerator_instance():
-    train_datagen = ImageDataGenerator(rescale=1. / 255,
-                                       shear_range=0.2,
-                                       zoom_range=0.2,
-                                       horizontal_flip=True)
-    return train_datagen
+    test_datagen = ImageDataGenerator(rescale=1. / 255)
+    return test_datagen
 
 def create_set(datagen, df, path, target_size, batch_size, target, color_mode, class_mode):
     set = datagen.flow_from_dataframe(
