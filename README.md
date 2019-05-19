@@ -90,10 +90,12 @@ To Do's:
 8. Create CNN instance for age regression prediction
 7. add transfer learnign from vgg-16 model
 3. Prepare input for multioutput classification (preferably python if no PowerShell/bash)
-5.1 Write automatic hyperparameter tunning with grid search 
-5.2 Compe up with ideas for bencharmking models (for example: same number of epochs, same early stopping criteris etc)
-5.3 Saving benchamrking and code for plotting
 
+5.1 Write automatic hyperparameter tunning with grid search 
+
+5.2 Compe up with ideas for bencharmking models (for example: same number of epochs, same early stopping criteris etc)
+
+5.3 Saving benchamrking and code for plotting
 
 2. Adding SumPooling layer
 6. simple django app that you can upload picture and recive predictions 
