@@ -2,8 +2,12 @@ import os
 from utils import *
 from cnn import CnnSolver
 from plots import plot_new_pred
+import getpass
 
-os.chdir('D:\DeepLearningProject')
+if getpass.getuser() == 'Konrad':
+    os.chdir('D:\DeepLearningProject')
+else:
+    raise ValueError('Check you own user name and add proper elif statement !!!')
 
 
 #### Input data preprocessing => creating training and test set
