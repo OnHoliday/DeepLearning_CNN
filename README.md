@@ -15,31 +15,28 @@ Question to ask:
 4. 
 
 # Goals of the project:
-================================================================================
+--------------------------------------------------------------------------------
 I) Performing accurate prediction on unseen data:
 	1) Create small app where you can load your own image and perform classification
 	2) Looking into limitations like min or max resolution, % of face on picture,
 	   % of full picture being face vs accuracy of prediction
---------------------------------------------------------------------------------
 II) Comapring different approaches to the problem:
 	1) classifing everything with one architecture ( 2 x 4 x 116 classes)
 	2) combing two CNN ( one CNN for gender and race + one CNN for Age )
         based on complexity of NN, time of training, avg error etc
---------------------------------------------------------------------------------
 III) Addictional task: ( If we have time )
 	1) comapring ACC of different architecture
 		( trade off complexity vs accuracy )
 		( minimal complexity for given treshold of ACC )
 	2) comapring our approach with pre-traind open-source model
 	3) Impact of filtered pictures on age predictions
---------------------------------------------------------------------------------
 IV) Extra bonus task
 	1) Face detection -> find face on picture and mark it with square around it
 	
 	
 
 # USEFUL READINGS:
-================================================================================
+--------------------------------------------------------------------------------
 
 Blog Posts about Image Classification
 --------------------------------------------------------------------------------
