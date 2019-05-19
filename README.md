@@ -1,10 +1,9 @@
 # Deep Learning - Image Classification Problem
-================================================================================
 
 --------------------------------------------------------------------------------
-# Project Objective: age estimation, ethnicity & gender classification
+## Project Objective: age estimation, ethnicity & gender classification
 --------------------------------------------------------------------------------
-# Dataset: https://susanqq.github.io/UTKFace/?fbclid=IwAR29u0ed1nMmRs8WI2XwiMUsGuUFh6yuEexYsXDmV2NeMoInYYvnPVmy0Uk
+## Dataset: https://susanqq.github.io/UTKFace/?fbclid=IwAR29u0ed1nMmRs8WI2XwiMUsGuUFh6yuEexYsXDmV2NeMoInYYvnPVmy0Uk
 --------------------------------------------------------------------------------
 
 Question to ask:
