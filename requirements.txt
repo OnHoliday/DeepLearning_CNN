@@ -12,3 +12,4 @@ tensorflow == 1.8.0
 keras-preprocessing == 1.0.9
 keras-applications == 1.0.7
 pillow == 5.1.0
+pathlib==1.0.1
