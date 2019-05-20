@@ -85,13 +85,21 @@ CNN classifier for Gender, Ethnicity , Age prediction
 
 To Do's:
 ---------
-1. add zerroPadding proper to sliding window size
-2. Adding SumPooling layer
-4. Somehow save number of epoches/examples that cnn has been already trained on to monitor process properly
-5. scrape the page: https://www.thispersondoesnotexist.com/ -> create databest with fake faces to distinguish
-6. simple django app that you can upload picture and recive predictions 
-7. add transfer learnign from vgg-16 model
+4. Somehow save number of epoches/examples that cnn has been already trained on to monitor process properly - DOMINKA
+1. add zerroPadding proper to sliding window size - DOMINKA
+8. Create CNN instance for age regression prediction - DOMINKA
 
+3. Prepare input for multioutput classification (preferably python if no PowerShell/bash) - LUCAS
+10. Deal with file paths
+
+5.1 Write automatic hyperparameter tunning with grid search - JOANA
+5.2 Compe up with ideas for bencharmking models (for example: same number of epochs, same early stopping criteris etc) - JOANA
+5.3 Saving benchamrking and code for plotting - JOANA
+
+7. add transfer learnign from vgg-16 model
+2. Adding SumPooling layer
+6. simple django app that you can upload picture and recive predictions 
+5. scrape the page: https://www.thispersondoesnotexist.com/ -> create databest with fake faces to distinguish
 
 Questions that need answer:
 ---------------------------	
