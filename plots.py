@@ -23,5 +23,5 @@ def plot_new_pred(prediction, path):
     # path1 = r'D:\DeepLearningProject\part2\24_0_1_20170113133945657.jpg'
     img = mpimg.imread(path)
     plt.imshow(img)
-    plt.title('This is a: ' + prediction)
+    plt.title('Predicted output is :' + prediction)
     plt.show()

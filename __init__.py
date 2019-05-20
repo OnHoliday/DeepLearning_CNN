@@ -16,7 +16,7 @@ else:
 ## Parameters
 target_size = 64
 batch_size = 32
-target = 'ethnic'               # 'gender' or 'age'
+target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
 class_mode = 'categorical'      # 'binary'
 
@@ -69,16 +69,16 @@ model.load_model()
 #### Train Model
 
 
-nr_of_epochs = 5
-steps_per_epoch = 21
-
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
-
+# nr_of_epochs = 5
+# steps_per_epoch = 21
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+#
 
 #### Make prediction
 
 
-prediction, path = make_new_prediction_ethnicity(model.model)
+prediction, path = make_new_prediction(model.model, target)
 plot_new_pred(prediction, path)
 
 

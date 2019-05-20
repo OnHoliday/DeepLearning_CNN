@@ -125,7 +125,8 @@ def create_set(datagen, df, path, target_size, batch_size, target, color_mode, c
             class_mode = class_mode)
     return set
 
-def make_new_prediction_ethnicity(classifier):
+
+def make_new_prediction(classifier, target):
     wd = get_current_directory()
     path1 = wd + '\part2\\'
 
@@ -134,40 +135,32 @@ def make_new_prediction_ethnicity(classifier):
     path = wd + '\part2\\' + random_pic
 
     test_image = image.load_img(path, target_size=(64, 64))
-
     test_image = image.img_to_array(test_image)
     test_image = np.expand_dims(test_image, axis=0)
     result = classifier.predict(test_image)
 
-    if result[0][0] == 1:
-        prediction = 'african'
-    elif result[0][0] == 2:
-        prediction = 'asian'
-    elif result[0][0] == 3:
-        prediction = 'indian'
-    elif result[0][0] == 4:
-        prediction = 'latino'
+    prediction = mapper(result, target)
+    return prediction , path
+
+def mapper(result, target):
+    if target == 'ethnic':
+        if result[0][0] == 1:
+            prediction = 'african'
+        elif result[0][0] == 2:
+            prediction = 'asian'
+        elif result[0][0] == 3:
+            prediction = 'indian'
+        elif result[0][0] == 4:
+            prediction = 'latino'
+        else:
+            prediction = 'white'
+
+    elif target == 'gender':
+        if result[0][0] == 1:
+           prediction = 'woman'
+        else:
+           prediction = 'man'
     else:
-        prediction = 'white'
-
-    return prediction, path
-
-def make_new_prediction_gender(classifier):
-    wd = get_current_directory()
-    path1 = wd + '\part2\\'
-
-    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
-    random_pic = random.choice(onlyfiles)
-    path = wd + '\part2\\' + random_pic
-
-    test_image = image.load_img(path1, target_size=(64, 64))
-    test_image = image.img_to_array(test_image)
-    test_image = np.expand_dims(test_image, axis=0)
-    result = classifier.predict(test_image)
-
-    if result[0][0] == 1:
-       prediction = 'woman'
-    else:
-       prediction = 'man'
+        prediction = str(result[0][0])
 
     return prediction
