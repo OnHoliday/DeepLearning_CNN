@@ -10,7 +10,7 @@ from pathlib import Path, PureWindowsPath # please check this medium article!! h
 if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':
-    project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep Learning/Project/Git')
+    project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
 else:
     raise ValueError('Check you own user name and add proper elif statement !!!')
 # if you have a windows computer please specify your project path as Konrad, if not as fruechtnicht
@@ -47,31 +47,31 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 
 # #### Build model
 
-#
-# params = {
-#     'kernel_size': 3,
-#     'stride': 2,
-#     'pooling_size': 2,
-#     'padding': "valid",
-#     'nr_of_channel': 32,
-#     'pooling_type': 'Max',
-#     'number_of_convPool_layer': 2,
-#     'dropout_rate': 0.3,
-#     'activation_function': 'relu',
-#     'input_size': 64,
-#     'hidden_neurons': 256,
-#     'color_scale': 'rgb',
-# }
-#
-# model = CnnSolver(class_mode, 'model_ethnic_2')
-# model.build_model(params)
+
+params = {
+    'kernel_size': 3,
+    'stride': 2,
+    'pooling_size': 2,
+    'padding': "valid",
+    'nr_of_channel': 32,
+    'pooling_type': 'Max',
+    'number_of_convPool_layer': 2,
+    'dropout_rate': 0.3,
+    'activation_function': 'relu',
+    'input_size': 64,
+    'hidden_neurons': 256,
+    'color_scale': 'rgb',
+}
+
+model = CnnSolver(class_mode, 'model_ethnic_2')
+model.build_model(params)
 
 
 #### Load Model
 
 
-model = CnnSolver(class_mode, 'model_ethnic')
-model.load_model()
+# model = CnnSolver(class_mode, 'model_ethnic')
+# model.load_model()
 
 #### Train Model
 
