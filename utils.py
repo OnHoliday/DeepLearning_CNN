@@ -21,9 +21,7 @@ def get_time_stamp():
 
 
 def prepare_input_data(path, nr_of_examples):
-
     onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
-
     df = pd.DataFrame(columns=['age', 'gender', 'ethnic','file_name'])
     index = 0
     for item in onlyfiles:
@@ -32,12 +30,13 @@ def prepare_input_data(path, nr_of_examples):
             try:
                 age, gender, ethnic, time = a[0], a[1], a[2], a[3]
             except:
-                pass
-            data = time[:8]
+                 pass
             df.loc[index, ['age', 'gender', 'ethnic', 'file_name']] = age, gender, ethnic, item
             index += 1
         else:
+            df['age'] = df['age'].astype('float')
             return df
+    df['age']=df['age'].astype('float')
     return df
 
 
@@ -62,6 +61,7 @@ def load_model(model_name):
     json_file.close()
 
     from keras.models import model_from_json
+
 
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
