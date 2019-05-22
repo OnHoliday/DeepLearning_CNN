@@ -9,6 +9,21 @@ import time
 from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint, TensorBoard
 from keras.preprocessing.image import ImageDataGenerator
 import random
+from keras.utils import to_categorical
+from PIL import Image
+from pathlib import Path, PureWindowsPath
+import getpass
+
+
+
+if getpass.getuser() == 'Konrad':
+    project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
+elif getpass.getuser() == 'fruechtnicht':
+    project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
+else:
+    raise ValueError('Check you own user name and add proper elif statement !!!')
+
+
 
 def get_current_directory():
     path = os.getcwd()
@@ -96,11 +111,12 @@ def callbackTensor():
     tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
     return tb
 
+
 def create_unique_cv_logger():
     wd = get_current_directory()
     now = get_time_stamp()
-    name = now + '_training.csv'
-    name = wd + r'/log/' + name
+    name = Path(now + '_training.csv')
+    name = project_dir / Path('log') / name
     csv_logger = CSVLogger(name)
     return csv_logger
 
@@ -157,6 +173,7 @@ def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1,
             class_mode = class_mode,
             seed = 1)
 
+
     GENy3 = datagen.flow_from_dataframe(
             dataframe = df,
             directory = path,
@@ -181,8 +198,8 @@ def make_new_prediction(classifier, target, target_size):
     path1 = wd + '\part2\\'
 
     onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
-    random_pic = random.choice(onlyfiles)
-    path = wd + '\part2\\' + random_pic
+    random_pic = Path(random.choice(onlyfiles))
+    path = path1 / random_pic
 
     test_image = image.load_img(path, target_size=(target_size, target_size))
     test_image = image.img_to_array(test_image)
@@ -214,3 +231,22 @@ def mapper(result, target):
         prediction = str(result[0][0])
 
     return prediction
+
+def get_data_generator(df, indices, for_training, batch_size=16):
+    images, ages, races, genders = [], [], [], []
+    while True:
+        for i in indices:
+            r = df.iloc[i]
+            file, age, race, gender = r['file'], r['age'], r['race_id'], r['gender_id']
+            im = Image.open(file)
+            im = im.resize((IM_WIDTH, IM_HEIGHT))
+            im = np.array(im) / 255.0
+            images.append(im)
+            ages.append(age / max_age)
+            races.append(to_categorical(race, len(RACE_ID_MAP)))
+            genders.append(to_categorical(gender, 2))
+            if len(images) >= batch_size:
+                yield np.array(images), [np.array(ages), np.array(races), np.array(genders)]
+                images, ages, races, genders = [], [], [], []
+        if not for_training:
+            break
