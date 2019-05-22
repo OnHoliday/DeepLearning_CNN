@@ -27,59 +27,62 @@ target = 'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
 class_mode = 'categorical'      # 'binary'
 
-params_to_tune={'kernel_size':[2,3],
-                'stride': [1,2,3],
-                'nr_of_channel': [48,64,78],
-                'hidden_neurons': 1024,
-                }
 
-df = pd.DataFrame
-for parameter, values in params_to_tune:
+for i in range(3):#average over 3 runs
 
-    params = {
-        'kernel_size': 3,  #
-        'stride': 1,  #
-        'pooling_size': 2,
-        'padding': "same",
-        'nr_of_channel': 64,  #
-        'pooling_type': 'Max',
-        'number_of_convPool_layer': 4,
-        'dropout_rate': 0.4,
-        'activation_function': 'relu',
-        'input_size': target_size,
-        'hidden_neurons': 1024,  #
-        'color_scale': 'rgb',
-    }
+    params_to_tune={'kernel_size':[3,5,7],
+                    'stride': [1,2,3],
+                    'nr_of_channel': [16,64,128],
+                    'hidden_neurons': [1024,16,256]
+                    }
 
-    for value in values:
-        params[parameter] = value
+    df = pd.DataFrame
+    for parameter, values in params_to_tune:
 
-        path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
-        train_df = prepare_input_data(path1, 10000)
-        # print(train_df[['ethnic', 'gender']].head())
-        train_datagen = create_trainingDataGenerator_instance()
-        training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
+        params = {
+            'kernel_size': 3,  #
+            'stride': 1,  #
+            'pooling_size': 2,
+            'padding': "same",
+            'nr_of_channel': 64,  #
+            'pooling_type': 'Max',
+            'number_of_convPool_layer': 4,
+            'dropout_rate': 0.4,
+            'activation_function': 'relu',
+            'input_size': target_size,
+            'hidden_neurons': 1024,  #
+            'color_scale': 'rgb',
+        }
 
-        ## Test data
+        for value in values:
+            params[parameter] = value
 
-        path3 = project_dir / 'part3'
-        test_df = prepare_input_data(path3, 3000)
-        test_datagen = create_testingDataGenerator_instance()
-        test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
+            path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
+            train_df = prepare_input_data(path1, 10000)
+            # print(train_df[['ethnic', 'gender']].head())
+            train_datagen = create_trainingDataGenerator_instance()
+            training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
 
-        modelName = target + '_' + parameter + value
-        model = CnnSolver(class_mode, modelName)
-        model.build_model(params)
+            ## Test data
 
-        #### Train Model
+            path3 = project_dir / 'part3'
+            test_df = prepare_input_data(path3, 3000)
+            test_datagen = create_testingDataGenerator_instance()
+            test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
 
-        nr_of_epochs = 5
-        steps_per_epoch = 21
+            modelName = target + '_' + parameter + value + str(i)
+            model = CnnSolver(class_mode, modelName)
+            model.build_model(params)
 
-        model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+            #### Train Model
+
+            nr_of_epochs = 20
+            steps_per_epoch = 50
+
+            model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
 
 
-#### Make prediction
+    #### Make prediction
 
 
 prediction, path = make_new_prediction(model.model, target, target_size)
