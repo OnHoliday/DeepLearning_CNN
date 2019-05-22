@@ -22,11 +22,11 @@ os.chdir(project_dir)
 #### Input data preprocessing => creating training and test set
 
 #Organize cropped files
-organize_cropped_files(project_dir)#<-------------execute only  after you moved UTKFace folder to your project_dir
+#organize_cropped_files(project_dir)#<-------------execute only  after you moved UTKFace folder to your project_dir
 
 
 ## Parameters
-target_size = 64
+target_size = 128
 batch_size = 32
 target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
@@ -64,34 +64,33 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 
 params = {
     'kernel_size': 3,
-    'stride': 2,
+    'stride': 1,
     'pooling_size': 2,
-    'padding': "valid",
-    'nr_of_channel': 32,
+    'padding': "same",
+    'nr_of_channel': 64,
     'pooling_type': 'Max',
-    'number_of_convPool_layer': 2,
-    'dropout_rate': 0.3,
+    'number_of_convPool_layer': 4,
+    'dropout_rate': 0.4,
     'activation_function': 'relu',
-    'input_size': 64,
-    'hidden_neurons': 256,
+    'input_size': target_size,
+    'hidden_neurons': 1024,
     'color_scale': 'rgb',
 }
 
-model = CnnSolver(class_mode, 'model_ethnic_2')
+model = CnnSolver(class_mode, 'model_fancy_5')
 model.build_model(params)
 
 
 #### Load Model
 
-
-# model = CnnSolver(class_mode, 'model_ethnic')
+# model = CnnSolver(class_mode, 'model_fancy_5')
 # model.load_model()
 
 #### Train Model
 
 
-nr_of_epochs = 5
-steps_per_epoch = 21
+nr_of_epochs = 1#5
+steps_per_epoch = 2#21
 
 model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
 
