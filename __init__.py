@@ -6,6 +6,7 @@ import getpass
 from pathlib import Path, PureWindowsPath # please check this medium article!! https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 
 
+
 if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':
@@ -25,7 +26,7 @@ organize_cropped_files(project_dir)#<-------------execute only  after you moved 
 
 
 ## Parameters
-target_size = 128
+target_size = 64
 batch_size = 32
 target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
@@ -63,26 +64,27 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 
 params = {
     'kernel_size': 3,
-    'stride': 1,
+    'stride': 2,
     'pooling_size': 2,
-    'padding': "same",
-    'nr_of_channel': 64,
+    'padding': "valid",
+    'nr_of_channel': 32,
     'pooling_type': 'Max',
-    'number_of_convPool_layer': 4,
-    'dropout_rate': 0.4,
+    'number_of_convPool_layer': 2,
+    'dropout_rate': 0.3,
     'activation_function': 'relu',
-    'input_size': target_size,
-    'hidden_neurons': 1024,
+    'input_size': 64,
+    'hidden_neurons': 256,
     'color_scale': 'rgb',
 }
 
-model = CnnSolver(class_mode, 'model_fancy_5')
+model = CnnSolver(class_mode, 'model_ethnic_2')
 model.build_model(params)
 
 
 #### Load Model
 
-# model = CnnSolver(class_mode, 'model_fancy_5')
+
+# model = CnnSolver(class_mode, 'model_ethnic')
 # model.load_model()
 
 #### Train Model

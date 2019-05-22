@@ -1,5 +1,6 @@
 
 # import the necessary packages
+from keras.engine.saving import save_model, load_model
 from keras.models import Model
 from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import Conv2D
@@ -169,3 +170,69 @@ class Group12Net:
         opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 
         self.model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights, metrics=["accuracy", "mean_absolute_error"])
+
+
+def built_multi(n_races,im_width):
+    from keras.layers import Input, Dense, BatchNormalization, Conv2D, MaxPool2D, GlobalMaxPool2D, Dropout
+    from keras.optimizers import SGD
+    from keras.models import Model
+
+    def conv_block(inp, filters=32, bn=True, pool=True):
+        _ = Conv2D(filters=filters, kernel_size=3, activation='relu', padding="same")(inp)
+        if bn:
+            _ = BatchNormalization()(_)
+        if pool:
+            _ = MaxPool2D()(_)
+        return _
+
+    input_layer = Input(shape=(im_width, im_width, 3))
+    _ = conv_block(input_layer, filters=32, bn=False, pool=False)
+    _ = conv_block(_, filters=32)
+    _ = conv_block(_, filters=32*2)
+    _ = conv_block(_, filters=32*4)
+    _ = conv_block(_, filters=32*5)
+    _ = conv_block(_, filters=32*6)
+    bottleneck = GlobalMaxPool2D()(_)
+
+    # for age calculation
+    _ = Dense(units=256, activation='relu')(bottleneck)
+    _ = Dropout(0.3)(_)
+    _ = Dense(units=128, activation='relu')(_)
+    _ = Dropout(0.3)(_)
+    age_output = Dense(units=1, activation='sigmoid', name='age_output')(_)
+
+    # for race prediction
+    _ = Dense(units=256, activation='relu')(bottleneck)
+    _ = Dropout(0.3)(_)
+    _ = Dense(units=128, activation='relu')(_)
+    _ = Dropout(0.3)(_)
+    race_output = Dense(units=n_races, activation='softmax', name='race_output')(_)
+
+    # for gender prediction
+    _ = Dense(units=128, activation='relu')(bottleneck)
+    _ = Dropout(0.3)(_)
+    gender_output = Dense(units=1, activation='sigmoid', name='gender_output')(_)
+
+    model = Model(inputs=input_layer, outputs=[age_output, race_output, gender_output])
+    model.compile(optimizer='rmsprop',
+                  loss={'age_output': 'mse', 'race_output': 'categorical_crossentropy',
+                        'gender_output': 'binary_crossentropy'},
+                  loss_weights={'age_output': 2., 'race_output': 1.5, 'gender_output': 1.},
+                  metrics={'age_output': 'mae', 'race_output': 'accuracy', 'gender_output': 'accuracy'})
+
+    return model
+
+def load_model_(model_name):
+    model = load_model(model_name)
+    model.compile(optimizer='rmsprop',
+                  loss={'age_output': 'mse', 'race_output': 'categorical_crossentropy',
+                        'gender_output': 'categorical_crossentropy'},
+                  loss_weights={'age_output': 2., 'race_output': 1.5, 'gender_output': 1.},
+                  metrics={'age_output': 'mae', 'race_output': 'accuracy', 'gender_output': 'accuracy'})
+
+    print(model.summary())
+    return model
+
+
+
+

@@ -13,6 +13,8 @@ from keras.utils import to_categorical
 from PIL import Image
 from pathlib import Path, PureWindowsPath
 import getpass
+import os
+import glob
 
 
 if getpass.getuser() == 'Konrad':
@@ -37,9 +39,14 @@ def get_time_stamp():
 
 
 def prepare_input_data(path, nr_of_examples):
+    lst = os.listdir(path)
+
+    for item in lst:
+        if not item.endswith(".jpg"):
+            os.remove(path / item)
 
     onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
-
+    random.shuffle(onlyfiles)
     df = pd.DataFrame(columns=['age', 'gender', 'ethnic','file_name'])
     index = 0
     for item in onlyfiles:
@@ -266,21 +273,68 @@ def mapper(result, target):
 
     return prediction
 
-def get_data_generator(df, indices, for_training, batch_size=16):
+def data_generator_cust(df,im_width, im_height, for_training, path, batch_size):
     images, ages, races, genders = [], [], [], []
+    n_races = len(df['ethnic'].unique())
+    df['age'] = df['age'].astype(float)
+    df['gender'] = df['gender'].astype(float)
+
+    max_age = 116
+
+
     while True:
-        for i in indices:
+        for i in range(len(df)):
             r = df.iloc[i]
-            file, age, race, gender = r['file'], r['age'], r['race_id'], r['gender_id']
-            im = Image.open(file)
-            im = im.resize((IM_WIDTH, IM_HEIGHT))
-            im = np.array(im) / 255.0
+            file, age, race, gender = Path(r['file_name']), r['age'], r['ethnic'], r['gender']
+            im = Image.open(path/file)
+            im = im.resize((im_width, im_height))
+            rgb_im = im.convert('RGB')
+            im = np.array(rgb_im) / 255.0
             images.append(im)
             ages.append(age / max_age)
-            races.append(to_categorical(race, len(RACE_ID_MAP)))
-            genders.append(to_categorical(gender, 2))
-            if len(images) >= batch_size:
+            races.append(to_categorical(race, n_races))
+            genders.append(gender)
+            if len(images) == batch_size:
                 yield np.array(images), [np.array(ages), np.array(races), np.array(genders)]
                 images, ages, races, genders = [], [], [], []
         if not for_training:
             break
+
+
+def make_new_p_multi(classifier):
+
+    path1 = project_dir / Path('part2')
+
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    random_pic = Path(random.choice(onlyfiles))
+    path = path1 / random_pic
+
+    test_image = image.load_img(path, target_size=(198, 198))
+    test_image = image.img_to_array(test_image)
+    test_image = np.expand_dims(test_image, axis=0)
+    result = classifier.predict(test_image)
+    print(result)
+    prediction = mapper_result_multi(result)
+    return prediction, path
+
+def mapper_result_multi(result):
+    prediction = dict()
+
+    prediction['age'] = (int(result[0][0][0]*116))
+    gen = lambda x: 'Male' if x < .5 else 'Female'
+    prediction['gender'] = gen(result[2])
+
+    if np.argmax(result[1]) == 0:
+        x='White'
+    elif np.argmax(result[1]) == 1:
+        x='Black'
+    elif np.argmax(result[1]) == 2:
+        x='Asian'
+    elif np.argmax(result[1]) == 3:
+        x='Indian'
+    else:
+        x='Other'
+    prediction['Ethnicity'] = x
+
+    return str(prediction)
+
