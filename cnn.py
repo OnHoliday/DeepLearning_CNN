@@ -4,7 +4,7 @@ from keras.models import Sequential
 from keras.layers import Conv2D
 from keras.layers import MaxPooling2D
 from keras.layers import Flatten
-from keras.layers import Dense
+from keras.layers import Dense, Dropout, BatchNormalization
 from utils import *
 from plots import plot_accuracy, plot_loss
 
@@ -45,17 +45,28 @@ class CnnSolver():
                 Conv2D(self.nr_of_channel, (self.kernel_size, self.kernel_size), strides=(self.stride, self.stride),
                        padding=self.padding, input_shape=(self.input_size, self.input_size, dimmensionality),
                        activation=self.activation_function))
+            classifier.add(BatchNormalization())
+            classifier.add(
+                Conv2D(self.nr_of_channel, (self.kernel_size, self.kernel_size), strides=(self.stride, self.stride),
+                       padding=self.padding, input_shape=(self.input_size, self.input_size, dimmensionality),
+                       activation=self.activation_function))
+
             # classifier.add(MaxPooling2D(pool_size=(2, 2)))
             classifier.add(MaxPooling2D(pool_size=(self.pooling_size, self.pooling_size)))
             iteration -= 1
 
         classifier.add(Flatten())
         classifier.add(Dense(units=self.hidden_neurons, activation=self.activation_function))
+        classifier.add(Dropout(self.dropout_rate))
+        classifier.add(Dense(units=int(self.hidden_neurons/2), activation=self.activation_function))
+        classifier.add(Dropout(self.dropout_rate))
+        classifier.add(Dense(units=int(self.hidden_neurons/4), activation=self.activation_function))
+        classifier.add(Dropout(self.dropout_rate))
         if self.problem_type == 'binary':
             classifier.add(Dense(units=1, activation='sigmoid'))
             classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-        elif self.problem_type == 'other':#regression
+        elif self.problem_type == 'regression':
             classifier.add(Dense(units=1, activation='sigmoid'))
             classifier.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
         else:
@@ -83,12 +94,12 @@ class CnnSolver():
                 raise ValueError('Wrong parameters: if wanna make plots iFcallbacks mast be True but is : ' + str(iFcallbacks))
 
         if iFcallbacks:
-            csv_logger = create_cv_logger()
+            csv_logger = create_cv_logger(self.model_name)
             history = callback_history()
             earlyStop = callbackEarlyStopping()
             checkPoint = callbackCheckpoint(self.model_name)
-            # tensor = callbackTensor()
-            callbacks = [csv_logger, history, earlyStop, checkPoint] #, tensor]
+            #tensor = callbackTensor()
+            callbacks = [csv_logger, history, earlyStop, checkPoint]#, tensor]
 
             history = self.model.fit_generator(training_set,
                                      steps_per_epoch=steps_per_epoch,
