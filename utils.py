@@ -243,6 +243,8 @@ def data_generator_cust(df,im_width, im_height, for_training, path, batch_size):
     images, ages, races, genders = [], [], [], []
     n_races = len(df['ethnic'].unique())
     df['age'] = df['age'].astype(float)
+    df['gender'] = df['gender'].astype(float)
+
     max_age = 116
 
 
@@ -257,14 +259,15 @@ def data_generator_cust(df,im_width, im_height, for_training, path, batch_size):
             images.append(im)
             ages.append(age / max_age)
             races.append(to_categorical(race, n_races))
-            genders.append(to_categorical(gender, 2))
+            genders.append(gender)
             if len(images) == batch_size:
                 yield np.array(images), [np.array(ages), np.array(races), np.array(genders)]
                 images, ages, races, genders = [], [], [], []
         if not for_training:
             break
 
-def make_new_prediction_multi(classifier):
+
+def make_new_p_multi(classifier):
 
     path1 = project_dir / Path('part2')
 
@@ -272,7 +275,7 @@ def make_new_prediction_multi(classifier):
     random_pic = Path(random.choice(onlyfiles))
     path = path1 / random_pic
 
-    test_image = image.load_img(path, target_size=(150, 150))
+    test_image = image.load_img(path, target_size=(198, 198))
     test_image = image.img_to_array(test_image)
     test_image = np.expand_dims(test_image, axis=0)
     result = classifier.predict(test_image)
@@ -284,14 +287,14 @@ def mapper_result_multi(result):
     prediction = dict()
 
     prediction['age'] = (int(result[0][0][0]*116))
-    gen = lambda x: 'Male' if np.argmax(x) ==0 else 'Female'
+    gen = lambda x: 'Male' if x < .5 else 'Female'
     prediction['gender'] = gen(result[2])
 
-    if np.argmax(result[1])==0:
+    if np.argmax(result[1]) == 0:
         x='White'
     elif np.argmax(result[1]) == 1:
         x='Black'
-    elif np.argmax(result[1]) == 3:
+    elif np.argmax(result[1]) == 2:
         x='Asian'
     elif np.argmax(result[1]) == 3:
         x='Indian'

@@ -54,7 +54,7 @@ from keras.callbacks import ModelCheckpoint
 
 
 
-csv_logger = create_cv_logger()
+csv_logger = create_cv_logger('multi_one_conv')
 callbacks = [csv_logger]
 
 #K.set_session(K.tf.Session(config=K.tf.ConfigProto(intra_op_‌​parallelism_threads=‌​32, inter_op_parallelism_threads=32)))
@@ -70,9 +70,9 @@ model.fit_generator(train_gen,
                               validation_steps=len(test) // batch_size)
 
 
-save_model(model, 'lukas_multi_crop.h5')
+save_model(model, 'multi_one_conv')
 
 # model = load_model_('lukas_multi.h5')
 
-prediction, path = make_new_prediction_multi(model)
+prediction, path = make_new_p_multi(model)
 plot_new_pred(prediction, path)

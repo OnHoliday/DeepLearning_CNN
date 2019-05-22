@@ -21,7 +21,7 @@ os.chdir(project_dir)
 
 
 ## Parameters
-target_size = 128
+target_size = 64
 batch_size = 32
 target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
@@ -32,7 +32,7 @@ class_mode = 'categorical'      # 'binary'
 ## Training data
 
 path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
-train_df = prepare_input_data(path1, 10000)
+train_df = prepare_input_data(path1, 2000)
 # print(train_df[['ethnic', 'gender']].head())
 train_datagen = create_trainingDataGenerator_instance()
 training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
@@ -40,7 +40,7 @@ training_set = create_set(train_datagen, train_df, path1, target_size, batch_siz
 ## Test data
 
 path3 = project_dir / 'part3'
-test_df = prepare_input_data(path3, 3000)
+test_df = prepare_input_data(path3, 600)
 test_datagen = create_testingDataGenerator_instance()
 test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
 
@@ -50,41 +50,42 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 
 params = {
     'kernel_size': 3,
-    'stride': 1,
+    'stride': 2,
     'pooling_size': 2,
-    'padding': "same",
-    'nr_of_channel': 64,
+    'padding': "valid",
+    'nr_of_channel': 32,
     'pooling_type': 'Max',
-    'number_of_convPool_layer': 4,
-    'dropout_rate': 0.4,
+    'number_of_convPool_layer': 2,
+    'dropout_rate': 0.3,
     'activation_function': 'relu',
-    'input_size': target_size,
-    'hidden_neurons': 1024,
+    'input_size': 64,
+    'hidden_neurons': 256,
     'color_scale': 'rgb',
 }
 
-model = CnnSolver(class_mode, 'model_fancy_5')
+model = CnnSolver(class_mode, 'model_ethnic_2')
 model.build_model(params)
 
 
 #### Load Model
 
-# model = CnnSolver(class_mode, 'model_fancy_5')
+
+# model = CnnSolver(class_mode, 'model_ethnic')
 # model.load_model()
 
 #### Train Model
 
 
-nr_of_epochs = 5
-steps_per_epoch = 21
-
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
-
+# nr_of_epochs = 5
+# steps_per_epoch = 21
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+#
 
 #### Make prediction
 
 
-prediction, path = make_new_prediction(model.model, target, target_size)
+prediction, path = make_new_prediction(model.model, target)
 plot_new_pred(prediction, path)
 
 
