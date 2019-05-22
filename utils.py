@@ -14,8 +14,6 @@ from PIL import Image
 from pathlib import Path, PureWindowsPath
 import getpass
 
-
-
 if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':

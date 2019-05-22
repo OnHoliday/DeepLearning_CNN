@@ -6,7 +6,6 @@ import getpass
 from pathlib import Path, PureWindowsPath # please check this medium article!! https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 
 
-
 if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':
