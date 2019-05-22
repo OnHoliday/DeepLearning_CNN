@@ -37,7 +37,10 @@ def prepare_input_data(path, nr_of_examples):
             df.loc[index, ['age', 'gender', 'ethnic', 'file_name']] = age, gender, ethnic, item
             index += 1
         else:
+            df['age'] = df['age'].astype('float')
+
             return df
+    df['age'] = df['age'].astype('float')
     return df
 
 
@@ -81,7 +84,7 @@ def callback_history():
     return history
 
 def callbackEarlyStopping():
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2, min_delta=1)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4, min_delta=0.01)
     return es
 
 def callbackCheckpoint(model_name):
@@ -93,7 +96,7 @@ def callbackTensor():
     tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
     return tb
 
-def create_cv_logger():
+def create_unique_cv_logger():
     wd = get_current_directory()
     now = get_time_stamp()
     name = now + '_training.csv'
@@ -101,6 +104,12 @@ def create_cv_logger():
     csv_logger = CSVLogger(name)
     return csv_logger
 
+def create_cv_logger(model_name):
+    wd = get_current_directory()
+    name = model_name + '_training.csv'
+    name = wd + r'/log/' + name
+    csv_logger = CSVLogger(name, append=True)
+    return csv_logger
 
 def create_trainingDataGenerator_instance():
     train_datagen = ImageDataGenerator(rescale=1. / 255,
@@ -125,8 +134,49 @@ def create_set(datagen, df, path, target_size, batch_size, target, color_mode, c
             class_mode = class_mode)
     return set
 
+def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1, target2, target3, color_mode, class_mode):
+    GENy1 = datagen.flow_from_dataframe(
+            dataframe = df,
+            directory = path,
+            x_col = 'file_name',
+            y_col = target1,
+            target_size = (target_size, target_size),
+            batch_size = batch_size,
+            color_mode = color_mode,
+            class_mode = class_mode,
+            seed = 1)
 
-def make_new_prediction(classifier, target):
+    GENy2 = datagen.flow_from_dataframe(
+            dataframe = df,
+            directory = path,
+            x_col = 'file_name',
+            y_col = target2,
+            target_size = (target_size, target_size),
+            batch_size = batch_size,
+            color_mode = color_mode,
+            class_mode = class_mode,
+            seed = 1)
+
+    GENy3 = datagen.flow_from_dataframe(
+            dataframe = df,
+            directory = path,
+            x_col = 'file_name',
+            y_col = target3,
+            target_size = (target_size, target_size),
+            batch_size = batch_size,
+            color_mode = color_mode,
+            class_mode = 'other',
+            seed = 1)
+
+    while True:
+            y1 = GENy1.next()
+            y2 = GENy2.next()
+            y3 = GENy3.next()
+            yield y1[0], {'gender_output': y1[1], 'race_output': y2[1], 'age_output': y3[1]}
+
+
+
+def make_new_prediction(classifier, target, target_size):
     wd = get_current_directory()
     path1 = wd + '\part2\\'
 
@@ -134,7 +184,7 @@ def make_new_prediction(classifier, target):
     random_pic = random.choice(onlyfiles)
     path = wd + '\part2\\' + random_pic
 
-    test_image = image.load_img(path, target_size=(64, 64))
+    test_image = image.load_img(path, target_size=(target_size, target_size))
     test_image = image.img_to_array(test_image)
     test_image = np.expand_dims(test_image, axis=0)
     result = classifier.predict(test_image)
