@@ -10,6 +10,8 @@ if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':
     project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
+elif getpass.getuser() == 'dominika.leszko':
+    project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
 else:
     raise ValueError('Check you own user name and add proper elif statement !!!')
 # if you have a windows computer please specify your project path as Konrad, if not as fruechtnicht
@@ -17,6 +19,9 @@ os.chdir(project_dir)
 
 
 #### Input data preprocessing => creating training and test set
+
+#Organize cropped files
+organize_cropped_files(project_dir)#<-------------execute only  after you moved UTKFace folder to your project_dir
 
 
 ## Parameters
@@ -30,16 +35,25 @@ class_mode = 'categorical'      # 'binary'
 
 ## Training data
 
-path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
-train_df = prepare_input_data(path1, 10000)
-# print(train_df[['ethnic', 'gender']].head())
+#cropped setup:
+path1 = project_dir / 'UTKFace'
+train_df = prepare_input_data(path1, 18966)
+#non-cropped setup:
+#path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
+#train_df = prepare_input_data(path1, 10000)
+
 train_datagen = create_trainingDataGenerator_instance()
 training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
 
 ## Test data
 
-path3 = project_dir / 'part3'
-test_df = prepare_input_data(path3, 3000)
+#cropped setup:
+path3 = project_dir / 'UTKFace_test'
+test_df = prepare_input_data(path3, 4694)
+#non-cropped setup:
+#path3 = project_dir / 'part3'
+#test_df = prepare_input_data(path3, 3000)
+
 test_datagen = create_testingDataGenerator_instance()
 test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
 
@@ -74,8 +88,8 @@ model.build_model(params)
 #### Train Model
 
 
-nr_of_epochs = 5
-steps_per_epoch = 21
+nr_of_epochs = 1#5
+steps_per_epoch = 2#21
 
 model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
 
@@ -83,7 +97,7 @@ model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=
 #### Make prediction
 
 
-prediction, path = make_new_prediction(model.model, target, target_size)
+prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
 plot_new_pred(prediction, path)
 
 

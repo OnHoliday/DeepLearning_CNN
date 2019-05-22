@@ -1,6 +1,6 @@
 import numpy as np
 from keras.preprocessing import image
-import os
+import os, shutil
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
@@ -14,10 +14,13 @@ from PIL import Image
 from pathlib import Path, PureWindowsPath
 import getpass
 
+
 if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':
     project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
+elif getpass.getuser() == 'dominika.leszko':
+    project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
 else:
     raise ValueError('Check you own user name and add proper elif statement !!!')
 
@@ -55,6 +58,33 @@ def prepare_input_data(path, nr_of_examples):
             return df
     df['age'] = df['age'].astype('float')
     return df
+
+def organize_cropped_files(project_dir):
+    #create train & test directories
+    train_dir = os.path.join(project_dir, 'UTKFace')
+    os.mkdir(project_dir / 'UTKFace_test')
+    test_dir = os.path.join(project_dir, 'UTKFace_test')
+    os.mkdir(project_dir / 'UTKFace_pred')
+    pred_dir=os.path.join(project_dir, 'UTKFace_pred')
+    #move random 20% files to UTKFace_test
+    onlyfiles = [f for f in listdir(project_dir / 'UTKFace') if isfile(join(project_dir / 'UTKFace', f))]
+    random.shuffle(onlyfiles)
+    t=int(0.8*len(onlyfiles))
+    mv_files=onlyfiles[t:]
+    for i in range(len(mv_files)):
+        i_path_from=os.path.join(train_dir, mv_files[i])
+        i_path_to=os.path.join(test_dir, mv_files[i])
+        shutil.move(i_path_from, i_path_to)
+    # move random 1% files to UTKFace_pred
+    random.shuffle(mv_files)
+    t2=int(0.99*len(mv_files))
+    mv_files2=mv_files[t2:]
+    for i in range(len(mv_files2)):
+        i_path_from2=os.path.join(test_dir, mv_files2[i])
+        i_path_to2=os.path.join(pred_dir, mv_files2[i])
+        shutil.move(i_path_from2, i_path_to2)
+
+
 
 
 def save_model(classifier, model_name):
@@ -148,6 +178,7 @@ def create_set(datagen, df, path, target_size, batch_size, target, color_mode, c
             class_mode = class_mode)
     return set
 
+
 def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1, target2, target3, color_mode, class_mode):
     GENy1 = datagen.flow_from_dataframe(
             dataframe = df,
@@ -191,9 +222,12 @@ def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1,
 
 
 
-def make_new_prediction(classifier, target, target_size):
+def make_new_prediction(classifier, target, target_size, cropped=False):
     wd = get_current_directory()
-    path1 = wd + '\part2\\'
+    if cropped:
+        path1 = wd + '\\UTKFace_pred\\'#for cropped
+    else:
+        path1 = wd + '\part2\\'#for non-cropped
 
     onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
     random_pic = Path(random.choice(onlyfiles))
@@ -206,6 +240,8 @@ def make_new_prediction(classifier, target, target_size):
 
     prediction = mapper(result, target)
     return prediction , path
+
+
 
 def mapper(result, target):
     if target == 'ethnic':
