@@ -22,7 +22,7 @@ os.chdir(project_dir)
 #### Input data preprocessing => creating training and test set
 
 #Organize cropped files
-#organize_cropped_files(project_dir)#<-------------execute only  after you moved UTKFace folder to your project_dir
+organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
 
 
 ## Parameters
