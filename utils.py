@@ -305,13 +305,13 @@ def data_generator_cust(df,im_width, im_height, for_training, path, batch_size):
 
 def make_new_p_multi(classifier):
 
-    path1 = project_dir / Path('part2')
 
+    path1 = project_dir / Path('UTKFace_pred')
     onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
     random_pic = Path(random.choice(onlyfiles))
     path = path1 / random_pic
 
-    test_image = image.load_img(path, target_size=(198, 198))
+    test_image = image.load_img(path, target_size=(224, 224))
     test_image = image.img_to_array(test_image)
     test_image = np.expand_dims(test_image, axis=0)
     result = classifier.predict(test_image)

@@ -113,7 +113,7 @@ params = {
     'padding': "same",
     'nr_of_channel': 32,
     'pooling_type': 'Max',
-    'number_of_convPool_layer': 2,
+    'number_of_convPool_layer': 5,
     'dropout_rate': 0.4,
     'activation_function': 'relu',
     'input_size': target_size,
