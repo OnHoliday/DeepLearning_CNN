@@ -46,7 +46,9 @@ def prepare_input_data(path, nr_of_examples):
             os.remove(path / item)
 
     onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
+
     random.shuffle(onlyfiles)
+
     df = pd.DataFrame(columns=['age', 'gender', 'ethnic','file_name'])
     index = 0
     for item in onlyfiles:
@@ -244,7 +246,7 @@ def make_new_prediction(classifier, target, target_size, cropped=False):
     test_image = image.img_to_array(test_image)
     test_image = np.expand_dims(test_image, axis=0)
     result = classifier.predict(test_image)
-
+    print(result)
     prediction = mapper(result, target)
     return prediction , path
 

@@ -18,7 +18,6 @@ else:
 # if you have a windows computer please specify your project path as Konrad, if not as fruechtnicht
 os.chdir(project_dir)
 
-
 #### Input data preprocessing => creating training and test set
 
 #Organize cropped files
@@ -60,6 +59,75 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 
 
 # #### Build model
+#
+#
+#
+# params = {
+#     'kernel_size': 3,
+#     'stride': 1,
+#     'pooling_size': 2,
+#     'padding': "same",
+#     'nr_of_channel': 32,
+#     'pooling_type': 'Max',
+#     'number_of_convPool_layer': 2,
+#     'dropout_rate': 0.4,
+#     'activation_function': 'relu',
+#     'input_size': target_size,
+#     'hidden_neurons': 128,
+#     'color_scale': 'rgb',
+# }
+#
+# model = CnnSolver(class_mode, 'model_fancy_6')
+# model.build_model(params)
+#
+#
+# #### Load Model
+#
+# # model = CnnSolver(class_mode, 'model_fancy_6')
+# # model.load_model()
+#
+# #### Train Model
+#
+#
+# nr_of_epochs = 10
+# steps_per_epoch = 20
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+#
+#
+# #### Make prediction
+#
+#
+# prediction, path = make_new_prediction(model.model, target, target_size)
+# plot_new_pred(prediction, path)
+#
+
+# Comparing 3 different archiecture
+
+# 2x Con => Max // 3x Con => Max // 2x Con => Con => Max
+
+params = {
+    'kernel_size': 3,
+    'stride': 1,
+    'pooling_size': 2,
+    'padding': "same",
+    'nr_of_channel': 32,
+    'pooling_type': 'Max',
+    'number_of_convPool_layer': 2,
+    'dropout_rate': 0.4,
+    'activation_function': 'relu',
+    'input_size': target_size,
+    'hidden_neurons': 128,
+    'color_scale': 'rgb',
+}
+
+model = CnnSolver(class_mode, 'model_fancy_2lay')
+model.build_model(params)
+
+nr_of_epochs = 20
+steps_per_epoch = 50
+
+model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
 
 
 params = {
@@ -77,9 +145,11 @@ params = {
     'color_scale': 'rgb',
 }
 
-model = CnnSolver(class_mode, 'model_fancy_5')
+model = CnnSolver(class_mode, 'model_fancy_3lay')
 model.build_model(params)
 
+nr_of_epochs = 20
+steps_per_epoch = 50
 
 #### Load Model
 

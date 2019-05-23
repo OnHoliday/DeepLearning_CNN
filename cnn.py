@@ -45,11 +45,11 @@ class CnnSolver():
                 Conv2D(self.nr_of_channel, (self.kernel_size, self.kernel_size), strides=(self.stride, self.stride),
                        padding=self.padding, input_shape=(self.input_size, self.input_size, dimmensionality),
                        activation=self.activation_function))
-            classifier.add(BatchNormalization())
-            classifier.add(
-                Conv2D(self.nr_of_channel, (self.kernel_size, self.kernel_size), strides=(self.stride, self.stride),
-                       padding=self.padding, input_shape=(self.input_size, self.input_size, dimmensionality),
-                       activation=self.activation_function))
+            # classifier.add(BatchNormalization())
+            # classifier.add(
+            #     Conv2D(self.nr_of_channel, (self.kernel_size, self.kernel_size), strides=(self.stride, self.stride),
+            #            padding=self.padding, input_shape=(self.input_size, self.input_size, dimmensionality),
+            #            activation=self.activation_function))
 
             # classifier.add(MaxPooling2D(pool_size=(2, 2)))
             classifier.add(MaxPooling2D(pool_size=(self.pooling_size, self.pooling_size)))
