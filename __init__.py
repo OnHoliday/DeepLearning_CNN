@@ -89,8 +89,8 @@ model.build_model(params)
 #### Train Model
 
 
-nr_of_epochs = 5
-steps_per_epoch = 21
+nr_of_epochs = 1#5
+steps_per_epoch = 2#21
 
 model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
