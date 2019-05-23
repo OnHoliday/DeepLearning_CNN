@@ -27,9 +27,9 @@ os.chdir(project_dir)
 ## Parameters
 target_size = 128
 batch_size = 32
-target =      'age'          # 'ethnic' or 'age' or 'gender'
+target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'other'      # 'binary','categorical
+class_mode = 'categorical' #'sparse'      # 'binary','categorical, 'other'
 
 # target = ['ethnic', 'gender']
 
@@ -124,10 +124,10 @@ params = {
 model = CnnSolver(class_mode, 'model_fancy_2lay')
 model.build_model(params)
 
-nr_of_epochs = 20
-steps_per_epoch = 50
+nr_of_epochs = 1#20
+steps_per_epoch = 2#50
 
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
 params = {
@@ -148,8 +148,8 @@ params = {
 model = CnnSolver(class_mode, 'model_fancy_3lay')
 model.build_model(params)
 
-nr_of_epochs = 20
-steps_per_epoch = 50
+nr_of_epochs = 1#20
+steps_per_epoch = 2#50
 
 #### Load Model
 
