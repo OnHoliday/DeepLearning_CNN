@@ -134,7 +134,7 @@ def callback_history():
     return history
 
 def callbackEarlyStopping():
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4, min_delta=0.01)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4, min_delta=0.0001)
     return es
 
 def callbackCheckpoint(model_name):
@@ -143,7 +143,7 @@ def callbackCheckpoint(model_name):
     return mc
 
 def callbackTensor():
-    tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
+    tb = TensorBoard(log_dir=r'D:\DeepLearningProject\logs', histogram_freq=0, write_graph=True, write_images=True)
     return tb
 
 

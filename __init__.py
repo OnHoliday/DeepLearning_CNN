@@ -21,7 +21,7 @@ os.chdir(project_dir)
 #### Input data preprocessing => creating training and test set
 
 #Organize cropped files
-organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
+# organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
 
 
 ## Parameters
@@ -37,7 +37,7 @@ class_mode = 'other'      # 'binary','categorical
 
 #cropped setup:
 path1 = project_dir / 'UTKFace'
-train_df = prepare_input_data(path1, 18966)
+train_df = prepare_input_data(path1, 18)
 #non-cropped setup:
 #path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
 #train_df = prepare_input_data(path1, 10000)
@@ -49,7 +49,7 @@ training_set = create_set(train_datagen, train_df, path1, target_size, batch_siz
 
 #cropped setup:
 path3 = project_dir / 'UTKFace_test'
-test_df = prepare_input_data(path3, 4694)
+test_df = prepare_input_data(path3, 46)
 #non-cropped setup:
 #path3 = project_dir / 'part3'
 #test_df = prepare_input_data(path3, 3000)
@@ -113,56 +113,60 @@ params = {
     'padding': "same",
     'nr_of_channel': 32,
     'pooling_type': 'Max',
-    'number_of_convPool_layer': 2,
+    'number_of_convPool_layer': 5,
     'dropout_rate': 0.4,
     'activation_function': 'relu',
     'input_size': target_size,
-    'hidden_neurons': 128,
+    'hidden_neurons': 256,
     'color_scale': 'rgb',
 }
 
 model = CnnSolver(class_mode, 'model_fancy_2lay')
 model.build_model(params)
 
-nr_of_epochs = 20
-steps_per_epoch = 50
+nr_of_epochs = 2
+steps_per_epoch = 5
 
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
-params = {
-    'kernel_size': 3,
-    'stride': 1,
-    'pooling_size': 2,
-    'padding': "same",
-    'nr_of_channel': 64,
-    'pooling_type': 'Max',
-    'number_of_convPool_layer': 4,
-    'dropout_rate': 0.4,
-    'activation_function': 'relu',
-    'input_size': target_size,
-    'hidden_neurons': 1024,
-    'color_scale': 'rgb',
-}
+# params = {
+#     'kernel_size': 3,
+#     'stride': 1,
+#     'pooling_size': 2,
+#     'padding': "same",
+#     'nr_of_channel': 64,
+#     'pooling_type': 'Max',
+#     'number_of_convPool_layer': 4,
+#     'dropout_rate': 0.4,
+#     'activation_function': 'relu',
+#     'input_size': target_size,
+#     'hidden_neurons': 1024,
+#     'color_scale': 'rgb',
+# }
+#
+# model = CnnSolver(class_mode, 'model_fancy_3lay')
+# model.build_model(params)
+#
+#
+# nr_of_epochs = 20
+# steps_per_epoch = 100
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
-model = CnnSolver(class_mode, 'model_fancy_3lay')
-model.build_model(params)
-
-nr_of_epochs = 20
-steps_per_epoch = 50
 
 #### Load Model
 
-# model = CnnSolver(class_mode, 'model_fancy_5')
+# nr_of_epochs = 20
+# steps_per_epoch = 100
+#
+# model = CnnSolver(class_mode, 'model_fancy_2lay')
 # model.load_model()
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 #### Train Model
 
 
-nr_of_epochs = 1#5
-steps_per_epoch = 2#21
-
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
 #### Make prediction
