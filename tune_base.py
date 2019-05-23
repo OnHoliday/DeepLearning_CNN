@@ -30,14 +30,14 @@ class_mode = 'categorical'      # 'binary'
 
 for i in range(3):#average over 3 runs
 
-    params_to_tune={'kernel_size':[3,5,7],
-                    'stride': [1,2,3],
-                    'nr_of_channel': [16,64,128],
-                    'hidden_neurons': [1024,16,256]
+    params_to_tune={'kernel_size':[3]#[3,5,7],
+                    # 'stride': [1,2,3],
+                    # 'nr_of_channel': [16,64,128],
+                    # 'hidden_neurons': [1024,16,256]
                     }
 
     df = pd.DataFrame
-    for parameter, values in params_to_tune:
+    for parameter, values in params_to_tune.items():
 
         params = {
             'kernel_size': 3,  #
@@ -57,26 +57,26 @@ for i in range(3):#average over 3 runs
         for value in values:
             params[parameter] = value
 
-            path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
-            train_df = prepare_input_data(path1, 10000)
+            path1 = project_dir / 'UTKFace' # see who easy we can join paths? no need for anything extra regardless your operating system!
+            train_df = prepare_input_data(path1, 18966)
             # print(train_df[['ethnic', 'gender']].head())
             train_datagen = create_trainingDataGenerator_instance()
             training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
 
             ## Test data
 
-            path3 = project_dir / 'part3'
-            test_df = prepare_input_data(path3, 3000)
+            path3 = project_dir / 'UTKFace_test'
+            test_df = prepare_input_data(path3, 4694)
             test_datagen = create_testingDataGenerator_instance()
             test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
 
-            modelName = target + '_' + parameter + value + str(i)
+            modelName = target + '_' + parameter + str(value) + str(i)
             model = CnnSolver(class_mode, modelName)
             model.build_model(params)
 
             #### Train Model
 
-            nr_of_epochs = 20
+            nr_of_epochs = 1
             steps_per_epoch = 50
 
             model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
@@ -85,8 +85,8 @@ for i in range(3):#average over 3 runs
     #### Make prediction
 
 
-prediction, path = make_new_prediction(model.model, target, target_size)
-plot_new_pred(prediction, path)
+#prediction, path = make_new_prediction(model.model, target, target_size)
+#plot_new_pred(prediction, path)
 
 
 

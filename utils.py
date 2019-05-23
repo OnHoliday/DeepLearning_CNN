@@ -46,7 +46,9 @@ def prepare_input_data(path, nr_of_examples):
             os.remove(path / item)
 
     onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
+
     random.shuffle(onlyfiles)
+
     df = pd.DataFrame(columns=['age', 'gender', 'ethnic','file_name'])
     index = 0
     for item in onlyfiles:
