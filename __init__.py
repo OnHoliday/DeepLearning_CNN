@@ -11,6 +11,8 @@ if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':
     project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
+elif getpass.getuser() == 'dominika.leszko':
+    project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
 else:
     raise ValueError('Check you own user name and add proper elif statement !!!')
 # if you have a windows computer please specify your project path as Konrad, if not as fruechtnicht
@@ -18,27 +20,40 @@ os.chdir(project_dir)
 
 #### Input data preprocessing => creating training and test set
 
+#Organize cropped files
+organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
+
+
 ## Parameters
-target_size = 64
+target_size = 128
 batch_size = 32
-target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
+target =      'age'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'categorical'      # 'binary'
+class_mode = 'other'      # 'binary','categorical
 
 # target = ['ethnic', 'gender']
 
 ## Training data
 
-path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
-train_df = prepare_input_data(path1, 1000)
-# print(train_df[['ethnic', 'gender']].head())
+#cropped setup:
+path1 = project_dir / 'UTKFace'
+train_df = prepare_input_data(path1, 18966)
+#non-cropped setup:
+#path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
+#train_df = prepare_input_data(path1, 10000)
+
 train_datagen = create_trainingDataGenerator_instance()
 training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
 
 ## Test data
 
-path3 = project_dir / 'part3'
-test_df = prepare_input_data(path3, 500)
+#cropped setup:
+path3 = project_dir / 'UTKFace_test'
+test_df = prepare_input_data(path3, 4694)
+#non-cropped setup:
+#path3 = project_dir / 'part3'
+#test_df = prepare_input_data(path3, 3000)
+
 test_datagen = create_testingDataGenerator_instance()
 test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
 
@@ -122,11 +137,11 @@ params = {
     'padding': "same",
     'nr_of_channel': 64,
     'pooling_type': 'Max',
-    'number_of_convPool_layer': 3,
+    'number_of_convPool_layer': 4,
     'dropout_rate': 0.4,
     'activation_function': 'relu',
     'input_size': target_size,
-    'hidden_neurons': 128,
+    'hidden_neurons': 1024,
     'color_scale': 'rgb',
 }
 
@@ -136,6 +151,25 @@ model.build_model(params)
 nr_of_epochs = 20
 steps_per_epoch = 50
 
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+#### Load Model
+
+# model = CnnSolver(class_mode, 'model_fancy_5')
+# model.load_model()
+
+#### Train Model
+
+
+nr_of_epochs = 1#5
+steps_per_epoch = 2#21
+
+model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+
+
+#### Make prediction
+
+
+prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
+plot_new_pred(prediction, path)
+
 
 

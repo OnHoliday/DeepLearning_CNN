@@ -66,9 +66,9 @@ class CnnSolver():
             classifier.add(Dense(units=1, activation='sigmoid'))
             classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-        elif self.problem_type == 'regression':
-            classifier.add(Dense(units=1, activation='sigmoid'))
-            classifier.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
+        elif self.problem_type == 'other':
+            classifier.add(Dense(units=1))#, activation='sigmoid'))
+            classifier.compile(optimizer='adam', loss='mse', metrics=['mae'])
         else:
             classifier.add(Dense(units=5, activation='softmax'))
             classifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])

@@ -1,6 +1,6 @@
 import numpy as np
 from keras.preprocessing import image
-import os
+import os, shutil
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
@@ -13,13 +13,16 @@ from keras.utils import to_categorical
 from PIL import Image
 from pathlib import Path, PureWindowsPath
 import getpass
-
+import os
+import glob
 
 
 if getpass.getuser() == 'Konrad':
     project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
 elif getpass.getuser() == 'fruechtnicht':
     project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
+elif getpass.getuser() == 'dominika.leszko':
+    project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
 else:
     raise ValueError('Check you own user name and add proper elif statement !!!')
 
@@ -36,9 +39,14 @@ def get_time_stamp():
 
 
 def prepare_input_data(path, nr_of_examples):
+    lst = os.listdir(path)
+
+    for item in lst:
+        if not item.endswith(".jpg"):
+            os.remove(path / item)
 
     onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
-
+    random.shuffle(onlyfiles)
     df = pd.DataFrame(columns=['age', 'gender', 'ethnic','file_name'])
     index = 0
     for item in onlyfiles:
@@ -57,6 +65,33 @@ def prepare_input_data(path, nr_of_examples):
             return df
     df['age'] = df['age'].astype('float')
     return df
+
+def organize_cropped_files(project_dir):
+    #create train & test directories
+    train_dir = os.path.join(project_dir, 'UTKFace')
+    os.mkdir(project_dir / 'UTKFace_test')
+    test_dir = os.path.join(project_dir, 'UTKFace_test')
+    os.mkdir(project_dir / 'UTKFace_pred')
+    pred_dir=os.path.join(project_dir, 'UTKFace_pred')
+    #move random 20% files to UTKFace_test
+    onlyfiles = [f for f in listdir(project_dir / 'UTKFace') if isfile(join(project_dir / 'UTKFace', f))]
+    random.shuffle(onlyfiles)
+    t=int(0.8*len(onlyfiles))
+    mv_files=onlyfiles[t:]
+    for i in range(len(mv_files)):
+        i_path_from=os.path.join(train_dir, mv_files[i])
+        i_path_to=os.path.join(test_dir, mv_files[i])
+        shutil.move(i_path_from, i_path_to)
+    # move random 1% files to UTKFace_pred
+    random.shuffle(mv_files)
+    t2=int(0.99*len(mv_files))
+    mv_files2=mv_files[t2:]
+    for i in range(len(mv_files2)):
+        i_path_from2=os.path.join(test_dir, mv_files2[i])
+        i_path_to2=os.path.join(pred_dir, mv_files2[i])
+        shutil.move(i_path_from2, i_path_to2)
+
+
 
 
 def save_model(classifier, model_name):
@@ -150,6 +185,7 @@ def create_set(datagen, df, path, target_size, batch_size, target, color_mode, c
             class_mode = class_mode)
     return set
 
+
 def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1, target2, target3, color_mode, class_mode):
     GENy1 = datagen.flow_from_dataframe(
             dataframe = df,
@@ -193,9 +229,12 @@ def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1,
 
 
 
-def make_new_prediction(classifier, target, target_size):
+def make_new_prediction(classifier, target, target_size, cropped=False):
     wd = get_current_directory()
-    path1 = wd + '\part2\\'
+    if cropped:
+        path1 = wd + '\\UTKFace_pred\\'#for cropped
+    else:
+        path1 = wd + '\part2\\'#for non-cropped
 
     onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
     random_pic = Path(random.choice(onlyfiles))
@@ -208,6 +247,8 @@ def make_new_prediction(classifier, target, target_size):
     print(result)
     prediction = mapper(result, target)
     return prediction , path
+
+
 
 def mapper(result, target):
     if target == 'ethnic':
@@ -232,21 +273,68 @@ def mapper(result, target):
 
     return prediction
 
-def get_data_generator(df, indices, for_training, batch_size=16):
+def data_generator_cust(df,im_width, im_height, for_training, path, batch_size):
     images, ages, races, genders = [], [], [], []
+    n_races = len(df['ethnic'].unique())
+    df['age'] = df['age'].astype(float)
+    df['gender'] = df['gender'].astype(float)
+
+    max_age = 116
+
+
     while True:
-        for i in indices:
+        for i in range(len(df)):
             r = df.iloc[i]
-            file, age, race, gender = r['file'], r['age'], r['race_id'], r['gender_id']
-            im = Image.open(file)
-            im = im.resize((IM_WIDTH, IM_HEIGHT))
-            im = np.array(im) / 255.0
+            file, age, race, gender = Path(r['file_name']), r['age'], r['ethnic'], r['gender']
+            im = Image.open(path/file)
+            im = im.resize((im_width, im_height))
+            rgb_im = im.convert('RGB')
+            im = np.array(rgb_im) / 255.0
             images.append(im)
             ages.append(age / max_age)
-            races.append(to_categorical(race, len(RACE_ID_MAP)))
-            genders.append(to_categorical(gender, 2))
-            if len(images) >= batch_size:
+            races.append(to_categorical(race, n_races))
+            genders.append(gender)
+            if len(images) == batch_size:
                 yield np.array(images), [np.array(ages), np.array(races), np.array(genders)]
                 images, ages, races, genders = [], [], [], []
         if not for_training:
             break
+
+
+def make_new_p_multi(classifier):
+
+    path1 = project_dir / Path('part2')
+
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    random_pic = Path(random.choice(onlyfiles))
+    path = path1 / random_pic
+
+    test_image = image.load_img(path, target_size=(198, 198))
+    test_image = image.img_to_array(test_image)
+    test_image = np.expand_dims(test_image, axis=0)
+    result = classifier.predict(test_image)
+    print(result)
+    prediction = mapper_result_multi(result)
+    return prediction, path
+
+def mapper_result_multi(result):
+    prediction = dict()
+
+    prediction['age'] = (int(result[0][0][0]*116))
+    gen = lambda x: 'Male' if x < .5 else 'Female'
+    prediction['gender'] = gen(result[2])
+
+    if np.argmax(result[1]) == 0:
+        x='White'
+    elif np.argmax(result[1]) == 1:
+        x='Black'
+    elif np.argmax(result[1]) == 2:
+        x='Asian'
+    elif np.argmax(result[1]) == 3:
+        x='Indian'
+    else:
+        x='Other'
+    prediction['Ethnicity'] = x
+
+    return str(prediction)
+
