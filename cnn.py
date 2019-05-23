@@ -107,7 +107,7 @@ class CnnSolver():
                                      validation_data=test_set,
                                      validation_steps=steps_per_epoch/3,
                                      #  use_multiprocessing=True,
-                                     workers=12,
+                                     workers=6,
                                      callbacks=callbacks
                                      )
         else:
@@ -117,7 +117,7 @@ class CnnSolver():
                                      validation_data=test_set,
                                      validation_steps=steps_per_epoch/3,
                                      #  use_multiprocessing=True,
-                                     workers=12,
+                                     workers=6,
                                      )
         print('Training is Done!!')
 

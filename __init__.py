@@ -21,15 +21,15 @@ os.chdir(project_dir)
 #### Input data preprocessing => creating training and test set
 
 #Organize cropped files
-# organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
+#organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
 
 
 ## Parameters
 target_size = 128
 batch_size = 32
-target =      'age'          # 'ethnic' or 'age' or 'gender'
+target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'other'      # 'binary','categorical
+class_mode = 'categorical' #'sparse'      # 'binary','categorical, 'other'
 
 # target = ['ethnic', 'gender']
 
@@ -167,6 +167,10 @@ model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=
 #### Train Model
 
 
+# nr_of_epochs = 1#5
+# steps_per_epoch = 2#21
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
 #### Make prediction

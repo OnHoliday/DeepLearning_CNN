@@ -124,6 +124,7 @@ class Group12Net:
 
         # construct both the "category" and "color" sub-networks
         inputs = Input(shape=inputShape)
+
         gender_branch = self.build_gender_branch(inputs, numGender, finalAct=finalAct, chanDim=chanDim)
         race_branch = self.build_race_branch(inputs, numRace, finalAct=finalAct, chanDim=chanDim)
         age_branch = self.build_age_branch(inputs, chanDim=chanDim)
@@ -168,7 +169,7 @@ class Group12Net:
         lossWeights = {"gender_output": 1.0, "race_output": 1.0, "age_output": 1.0}
         opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 
-        self.model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights, metrics=["accuracy", "mean_absolute_error"])
+        self.model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights, metrics={"gender_output":"accuracy", "race_output":"accuracy","age_output":"mae"})
 
 
 def built_multi(n_races,im_width):
@@ -191,7 +192,7 @@ def built_multi(n_races,im_width):
     _ = conv_block(_, filters=32*4)
     _ = conv_block(_, filters=32*5)
     _ = conv_block(_, filters=32*6)
-    bottleneck = GlobalMaxPool2D()(_)
+    bottleneck = GlobalMaxPool2D()(_)#bottleneck???
 
     # for age calculation
     _ = Dense(units=256, activation='relu')(bottleneck)

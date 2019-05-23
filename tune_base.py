@@ -27,63 +27,66 @@ target = 'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
 class_mode = 'categorical'      # 'binary'
 
-params_to_tune={'kernel_size':[2,3],
-                'stride': [1,2,3],
-                'nr_of_channel': [48,64,78],
-                'hidden_neurons': 1024,
-                }
 
-df = pd.DataFrame
-for parameter, values in params_to_tune:
+for i in range(3):#average over 3 runs
 
-    params = {
-        'kernel_size': 3,  #
-        'stride': 1,  #
-        'pooling_size': 2,
-        'padding': "same",
-        'nr_of_channel': 64,  #
-        'pooling_type': 'Max',
-        'number_of_convPool_layer': 4,
-        'dropout_rate': 0.4,
-        'activation_function': 'relu',
-        'input_size': target_size,
-        'hidden_neurons': 1024,  #
-        'color_scale': 'rgb',
-    }
+    path1 = project_dir / 'UTKFace'  # see who easy we can join paths? no need for anything extra regardless your operating system!
+    train_df = prepare_input_data(path1, 18966)
+    # print(train_df[['ethnic', 'gender']].head())
+    train_datagen = create_trainingDataGenerator_instance()
+    training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
 
-    for value in values:
-        params[parameter] = value
+    ## Test data
 
-        path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
-        train_df = prepare_input_data(path1, 10000)
-        # print(train_df[['ethnic', 'gender']].head())
-        train_datagen = create_trainingDataGenerator_instance()
-        training_set = create_set(train_datagen, train_df, path1, target_size, batch_size, target, color_mode, class_mode)
+    path3 = project_dir / 'UTKFace_test'
+    test_df = prepare_input_data(path3, 4694)
+    test_datagen = create_testingDataGenerator_instance()
+    test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
 
-        ## Test data
+    params_to_tune={'kernel_size':[3,5,7],
+                    'stride': [1,2],
+                    'nr_of_channel': [16,64,128],
+                    'hidden_neurons': [1024,16,256]
+                    }
 
-        path3 = project_dir / 'part3'
-        test_df = prepare_input_data(path3, 3000)
-        test_datagen = create_testingDataGenerator_instance()
-        test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
+    df = pd.DataFrame
+    for parameter, values in params_to_tune.items():
 
-        modelName = target + '_' + parameter + value
-        model = CnnSolver(class_mode, modelName)
-        model.build_model(params)
+        params = {
+            'kernel_size': 3,
+            'stride': 1,
+            'pooling_size': 2,
+            'padding': "same",
+            'nr_of_channel': 32,
+            'pooling_type': 'Max',
+            'number_of_convPool_layer': 3,
+            'dropout_rate': 0.4,
+            'activation_function': 'relu',
+            'input_size': target_size,
+            'hidden_neurons': 256,
+            'color_scale': 'rgb',
+        }
 
-        #### Train Model
+        for value in values:
+            params[parameter] = value
 
-        nr_of_epochs = 5
-        steps_per_epoch = 21
+            modelName = 'testing' + '_' + target + '_' + parameter + '_' + str(value) + '_' + str(i)
+            model = CnnSolver(class_mode, modelName)
+            model.build_model(params)
 
-        model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+            #### Train Model
+
+            nr_of_epochs = 20
+            steps_per_epoch = 50
+
+            model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
-#### Make prediction
+    #### Make prediction
 
 
-prediction, path = make_new_prediction(model.model, target, target_size)
-plot_new_pred(prediction, path)
+#prediction, path = make_new_prediction(model.model, target, target_size)
+#plot_new_pred(prediction, path)
 
 
 
