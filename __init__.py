@@ -28,9 +28,9 @@ organize_cropped_files(project_dir)#<-------------execute only once after you mo
 ## Parameters
 target_size = 128
 batch_size = 32
-target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
+target =      'age'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'categorical'      # 'binary'
+class_mode = 'other'      # 'binary','categorical
 
 # target = ['ethnic', 'gender']
 
@@ -89,10 +89,10 @@ model.build_model(params)
 #### Train Model
 
 
-nr_of_epochs = 1#5
-steps_per_epoch = 2#21
+nr_of_epochs = 5
+steps_per_epoch = 21
 
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=True)
+model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
 #### Make prediction
