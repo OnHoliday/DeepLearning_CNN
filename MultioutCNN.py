@@ -55,7 +55,7 @@ from keras.callbacks import ModelCheckpoint
 
 
 
-csv_logger = create_cv_logger('multi_one_conv')
+csv_logger = create_cv_logger('transfer')
 tensorcall = callbackTensor()
 callbacks = [csv_logger, tensorcall]
 
@@ -64,7 +64,7 @@ callbacks = [csv_logger, tensorcall]
 
 model.fit_generator(train_gen,
                               steps_per_epoch=len(train_df) // batch_size,
-                              epochs=1,
+                              epochs=20,
                               callbacks=callbacks,
                               workers=1,
                               # use_multiprocessing=True,

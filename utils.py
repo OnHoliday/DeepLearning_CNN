@@ -112,9 +112,12 @@ def save_model(classifier, model_name):
 
 def load_model(model_name):
     # load json and create model
-    model_name_type = model_name + '.json'
-    model_path = project_dir / 'lucas_log_models'/ 'cvs' / model_name_type
-    json_file = open(model_path, 'r')
+    model_name_json = model_name + '.json'
+# Uncoment to use Lucas CVS
+#    model_name_type = model_name + '.json'
+#    model_path = project_dir / 'lucas_log_models'/ 'cvs' / model_name_type
+#     json_file = open(model_path, 'r')
+    json_file = open(model_name_json, 'r')
     loaded_model_json = json_file.read()
     json_file.close()
 
@@ -149,7 +152,7 @@ def callbackCheckpoint(model_name):
     return mc
 
 def callbackTensor():
-    tb = TensorBoard(log_dir=r'D:\DeepLearningProject\logs', histogram_freq=0, write_graph=True, write_images=True)
+    tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
     return tb
 
 
