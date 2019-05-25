@@ -145,7 +145,7 @@ def callbackCheckpoint(model_name):
     return mc
 
 def callbackTensor():
-    tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
+    tb = TensorBoard(log_dir=project_dir/'logs', histogram_freq=0, write_graph=True, write_images=True)
     return tb
 
 
