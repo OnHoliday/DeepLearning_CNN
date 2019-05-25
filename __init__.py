@@ -27,9 +27,9 @@ os.chdir(project_dir)
 ## Parameters
 target_size = 128
 batch_size = 32
-target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
+target = 'age'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'categorical' #'sparse'      # 'binary','categorical, 'other'
+class_mode = 'other' #'sparse'      # 'binary','categorical, 'other'
 
 # target = ['ethnic', 'gender']
 
@@ -62,21 +62,21 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 #
 #
 #
-# params = {
-#     'kernel_size': 3,
-#     'stride': 1,
-#     'pooling_size': 2,
-#     'padding': "same",
-#     'nr_of_channel': 32,
-#     'pooling_type': 'Max',
-#     'number_of_convPool_layer': 2,
-#     'dropout_rate': 0.4,
-#     'activation_function': 'relu',
-#     'input_size': target_size,
-#     'hidden_neurons': 128,
-#     'color_scale': 'rgb',
-# }
-#
+params = {
+    'kernel_size': 3,
+    'stride': 1,
+    'pooling_size': 2,
+    'padding': "same",
+    'nr_of_channel': 32,
+    'pooling_type': 'Max',
+    'number_of_convPool_layer': 2,
+    'dropout_rate': 0.4,
+    'activation_function': 'relu',
+    'input_size': target_size,
+    'hidden_neurons': 128,
+    'color_scale': 'rgb',
+}
+
 # model = CnnSolver(class_mode, 'model_fancy_6')
 # model.build_model(params)
 #
@@ -106,28 +106,28 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 
 # 2x Con => Max // 3x Con => Max // 2x Con => Con => Max
 
-params = {
-    'kernel_size': 3,
-    'stride': 1,
-    'pooling_size': 2,
-    'padding': "same",
-    'nr_of_channel': 32,
-    'pooling_type': 'Max',
-    'number_of_convPool_layer': 5,
-    'dropout_rate': 0.4,
-    'activation_function': 'relu',
-    'input_size': target_size,
-    'hidden_neurons': 256,
-    'color_scale': 'rgb',
-}
-
-model = CnnSolver(class_mode, 'model_fancy_2lay')
-model.build_model(params)
-
-nr_of_epochs = 2
-steps_per_epoch = 5
-
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+# params = {
+#     'kernel_size': 3,
+#     'stride': 1,
+#     'pooling_size': 2,
+#     'padding': "same",
+#     'nr_of_channel': 32,
+#     'pooling_type': 'Max',
+#     'number_of_convPool_layer': 5,
+#     'dropout_rate': 0.4,
+#     'activation_function': 'relu',
+#     'input_size': target_size,
+#     'hidden_neurons': 256,
+#     'color_scale': 'rgb',
+# }
+#
+# model = CnnSolver(class_mode, 'model_fancy_2lay')
+# model.build_model(params)
+#
+# nr_of_epochs = 2
+# steps_per_epoch = 5
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
 # params = {
@@ -176,8 +176,37 @@ model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=
 #### Make prediction
 
 
-prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
-plot_new_pred(prediction, path)
+# prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
+# plot_new_pred(prediction, path)
 
 
+
+####################################
+#####  Ensembling -> Voting    #####
+####################################
+
+nr_of_epochs = 2
+steps_per_epoch = 4
+
+model1 = CnnSolver(class_mode, 'age1')
+model1.build_model(params)
+model1.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+
+# model1.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+
+model2 = CnnSolver(class_mode, 'age2')
+model2.build_model(params)
+model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+
+# model2.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+
+model3 = CnnSolver(class_mode, 'age3')
+model3.build_model(params)
+model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+
+# model3.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+
+models = [model1.model,model2.model, model3.model]
+
+voting_prediction(models, target, target_size)
 

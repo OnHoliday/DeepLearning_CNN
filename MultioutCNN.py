@@ -66,8 +66,8 @@ model.fit_generator(train_gen,
                               steps_per_epoch=len(train_df) // batch_size,
                               epochs=1,
                               callbacks=callbacks,
-                              workers=6,
-                              use_multiprocessing=True,
+                              workers=1,
+                              # use_multiprocessing=True,
                               validation_data=test_gen,
                               validation_steps=len(test_df) // batch_size)
 
