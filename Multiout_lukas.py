@@ -24,9 +24,8 @@ os.chdir(project_dir)
 
 
 ## Parameters
-target_size = 64
+target_size = 224
 batch_size = 64
-im_width = im_height = 224
 
 
 
@@ -40,8 +39,25 @@ train_df = prepare_input_data(path1, 18966)
 path3 = project_dir / 'UTKFace_test'
 test_df = prepare_input_data(path3, 4694)
 
-train_gen = data_generator_cust(train_df,im_width,im_width, True, path1, batch_size)
-test_gen = data_generator_cust(test_df,im_width,im_width, True, path3, batch_size)
+
+
+input_imgen = ImageDataGenerator(rescale = 1./255,
+                                   shear_range = 0.2,
+                                   zoom_range = 0.2,
+                                   rotation_range=5.,
+                                   horizontal_flip = True)
+
+test_imgen = ImageDataGenerator(rescale = 1./255)
+
+color_mode = 'rgb'
+
+train_gen = gnerate_genarator_multi(input_imgen, train_df, path1, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
+test_gen = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
+
+
+
+# train_gen = data_generator_cust(train_df,im_width,im_width, True, path1, batch_size)
+# test_gen = data_generator_cust(test_df,im_width,im_width, True, path3, batch_size)
 
 
 
@@ -49,13 +65,13 @@ test_gen = data_generator_cust(test_df,im_width,im_width, True, path3, batch_siz
 
 ## building the model ##
 
-model = built_transfer()
+model = built_multi(n_races=5, im_width=target_size)
 
 from keras.callbacks import ModelCheckpoint
 
 
 
-csv_logger = create_cv_logger('transfer')
+csv_logger = create_cv_logger('lukas_multi')
 tensorcall = callbackTensor()
 callbacks = [csv_logger, tensorcall]
 
@@ -72,9 +88,9 @@ model.fit_generator(train_gen,
                               validation_steps=len(test_df) // batch_size)
 
 
-save_model(model, 'transfer')
+save_model(model, 'lukas_multi')
 
 # model = load_model_('lukas_multi.h5')
 
-prediction, path = make_new_p_multi(model)
-plot_new_pred(prediction, path)
+# prediction, path = make_new_p_multi(model)
+# plot_new_pred(prediction, path)
