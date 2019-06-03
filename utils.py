@@ -204,7 +204,7 @@ def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1,
             target_size = (target_size, target_size),
             batch_size = batch_size,
             color_mode = color_mode,
-            class_mode = class_mode,
+            class_mode = 'binary', #binary org cat?
             seed = 1)
 
     GENy2 = datagen.flow_from_dataframe(
@@ -215,7 +215,7 @@ def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1,
             target_size = (target_size, target_size),
             batch_size = batch_size,
             color_mode = color_mode,
-            class_mode = class_mode,
+            class_mode = 'sparse',
             seed = 1)
 
 
