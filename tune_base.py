@@ -76,7 +76,7 @@ for i in range(3):#average over 3 runs
 
             #### Train Model
 
-            nr_of_epochs = 20
+            nr_of_epochs = 30
             steps_per_epoch = 50
 
             model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
