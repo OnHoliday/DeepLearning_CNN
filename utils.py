@@ -24,6 +24,8 @@ elif getpass.getuser() == 'fruechtnicht':
     project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
 elif getpass.getuser() == 'dominika.leszko':
     project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
+elif getpass.getuser() == 'jojo':
+    project_dir = Path(r'C:\Users\jojo\Documents\Uni\Second Semester\Deep Learning\Project\Master')
 else:
     raise ValueError('Check you own user name and add proper elif statement !!!')
 
