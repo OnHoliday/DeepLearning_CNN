@@ -72,8 +72,8 @@ from keras.callbacks import ModelCheckpoint
 
 
 csv_logger = create_cv_logger('lukas_multi')
-tensorcall = callbackTensor()
-callbacks = [csv_logger, tensorcall]
+#tensorcall = callbackTensor()
+callbacks = [csv_logger]#, tensorcall]
 
 #K.set_session(K.tf.Session(config=K.tf.ConfigProto(intra_op_‌​parallelism_threads=‌​32, inter_op_parallelism_threads=32)))
 
