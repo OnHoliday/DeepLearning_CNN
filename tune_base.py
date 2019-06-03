@@ -23,9 +23,9 @@ os.chdir(project_dir)
 ## Parameters
 target_size = 128
 batch_size = 32
-target = 'ethnic'          # 'ethnic' or 'age' or 'gender'
+target = 'gender'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'categorical'      # 'binary'
+class_mode = 'binary'      # 'binary'
 
 
 for i in range(3):#average over 3 runs
