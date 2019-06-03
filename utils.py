@@ -195,7 +195,7 @@ def create_set(datagen, df, path, target_size, batch_size, target, color_mode, c
     return set
 
 
-def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1, target2, target3, color_mode, class_mode):
+def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1, target2, target3, color_mode):
     GENy1 = datagen.flow_from_dataframe(
             dataframe = df,
             directory = path,
@@ -204,7 +204,7 @@ def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1,
             target_size = (target_size, target_size),
             batch_size = batch_size,
             color_mode = color_mode,
-            class_mode = 'binary', #binary org cat?
+            class_mode = 'binary',
             seed = 1)
 
     GENy2 = datagen.flow_from_dataframe(
@@ -215,7 +215,7 @@ def gnerate_genarator_multi(datagen, df, path, target_size, batch_size, target1,
             target_size = (target_size, target_size),
             batch_size = batch_size,
             color_mode = color_mode,
-            class_mode = 'sparse',
+            class_mode = 'categorical',
             seed = 1)
 
 

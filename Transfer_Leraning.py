@@ -13,7 +13,7 @@ from keras.optimizers import Adam
 
 
 #Preprocessing
-def built_transfer():
+def built_transfer(Unfreeze_some=False):
 
     base_model = MobileNet(weights='imagenet',include_top=False)
 
@@ -43,10 +43,18 @@ def built_transfer():
 
     model = Model(inputs=base_model.input,outputs=[age_output, race_output, gender_output])
 
-    for layer in model.layers[:88]:
-        layer.trainable=False
-    for layer in model.layers[88:]:
-        layer.trainable=True
+    if Unfreeze_some:
+
+        for layer in model.layers[:80]:
+            layer.trainable=False
+        for layer in model.layers[80:]:
+            layer.trainable=True
+
+    else:
+        for layer in model.layers[:88]:
+            layer.trainable=False
+        for layer in model.layers[88:]:
+            layer.trainable=True
 
     model.compile(optimizer='rmsprop',
                   loss={'age_output': 'mse', 'race_output': 'categorical_crossentropy',

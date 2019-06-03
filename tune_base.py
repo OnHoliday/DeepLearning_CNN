@@ -25,7 +25,7 @@ target_size = 128
 batch_size = 32
 target = 'gender'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'binary'      # 'binary'
+class_mode = 'binary'      # 'binary', 'other', 'categorical
 
 
 for i in range(3):#average over 3 runs
