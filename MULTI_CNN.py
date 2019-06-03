@@ -190,9 +190,9 @@ def built_multi(n_races,im_width):
     _ = conv_block(_, filters=32)
     _ = conv_block(_, filters=32*2)
     _ = conv_block(_, filters=32*4)
-    _ = conv_block(_, filters=32*5)
-    _ = conv_block(_, filters=32*6)
-    bottleneck = GlobalMaxPool2D()(_)#bottleneck???
+    _ = conv_block(_, filters=32*4)
+    _ = conv_block(_, filters=32*4)
+    bottleneck = GlobalMaxPool2D()(_)#bott
 
     # for age calculation
     _ = Dense(units=256, activation='relu')(bottleneck)
