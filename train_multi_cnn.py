@@ -43,13 +43,13 @@ class_mode = 'categorical'      # 'binary'
 
 ## Training data
 
-path1 = get_current_directory() + '\part1\\'
-train_df = prepare_input_data(path1, 10)
+path1 = project_dir / 'UTKFace'
+train_df = prepare_input_data(path1, 1000)
 
 ## Test data
 
-path3 = get_current_directory() + '\part3\\'
-test_df = prepare_input_data(path3, 30)
+path3 = project_dir / 'UTKFace_test'
+test_df = prepare_input_data(path3, 300)
 
 # train_datagen = create_trainingDataGenerator_instance()
 # training_set1 = create_set(train_datagen, train_df, path1, target_size, batch_size, 'gender', color_mode, class_mode)
@@ -75,29 +75,32 @@ test_df = prepare_input_data(path3, 30)
 gr12 = Group12Net('tryModel')
 gr12.build(64, 64, numGender=2, numRace=5, finalAct="softmax")
 # gr12.load_model()
+
+
+
+input_imgen = ImageDataGenerator(rescale = 1./255,
+                                   shear_range = 0.2,
+                                   zoom_range = 0.2,
+                                   rotation_range=5.,
+                                   horizontal_flip = True)
+
+test_imgen = ImageDataGenerator(rescale = 1./255)
 #
-#
-#
-# input_imgen = ImageDataGenerator(rescale = 1./255,
-#                                    shear_range = 0.2,
-#                                    zoom_range = 0.2,
-#                                    rotation_range=5.,
-#                                    horizontal_flip = True)
-#
-# test_imgen = ImageDataGenerator(rescale = 1./255)
-# #
-# inputgenerator = gnerate_genarator_multi(input_imgen, train_df, path1, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode, class_mode)
-# testgenerator = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode, class_mode)
-#
-#
-# history = gr12.model.fit_generator(inputgenerator,
-#                               steps_per_epoch=30,
-#                               epochs=20,
-#                               validation_data=testgenerator,
-#                               validation_steps=10,
-#                               shuffle=False)
-#
-# gr12._save_model()
+inputgenerator = gnerate_genarator_multi(input_imgen, train_df, path1, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode, class_mode)
+testgenerator = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode, class_mode)
+
+tensor = callbackTensor()
+
+callbacks = [tensor]
+history = gr12.model.fit_generator(inputgenerator,
+                              steps_per_epoch=3,
+                              epochs=2,
+                              validation_data=testgenerator,
+                              validation_steps=10,
+                              callbacks=callbacks,
+                              shuffle=False)
+
+gr12._save_model()
 
 wd = get_current_directory()
 path1 = wd + '\part2\\'

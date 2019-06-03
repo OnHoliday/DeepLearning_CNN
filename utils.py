@@ -14,6 +14,7 @@ from PIL import Image
 from pathlib import Path, PureWindowsPath
 import getpass
 import os
+from sklearn.metrics import confusion_matrix, classification_report
 import glob
 
 
@@ -112,6 +113,10 @@ def save_model(classifier, model_name):
 def load_model(model_name):
     # load json and create model
     model_name_json = model_name + '.json'
+# Uncoment to use Lucas CVS
+#    model_name_type = model_name + '.json'
+#    model_path = project_dir / 'lucas_log_models'/ 'cvs' / model_name_type
+#     json_file = open(model_path, 'r')
     json_file = open(model_name_json, 'r')
     loaded_model_json = json_file.read()
     json_file.close()
@@ -121,7 +126,9 @@ def load_model(model_name):
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
     model_name_h5 = model_name + '.h5'
-    loaded_model.load_weights(model_name_h5)
+    model_path = project_dir / 'lucas_log_models' / 'cvs' / model_name_h5
+
+    loaded_model.load_weights(model_path)
     print("Loaded model from disk")
     return loaded_model
 
@@ -136,7 +143,7 @@ def callback_history():
     return history
 
 def callbackEarlyStopping():
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4, min_delta=0.01)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4, min_delta=0.0001)
     return es
 
 def callbackCheckpoint(model_name):
@@ -145,7 +152,7 @@ def callbackCheckpoint(model_name):
     return mc
 
 def callbackTensor():
-    tb = TensorBoard(log_dir=project_dir/'logs', histogram_freq=0, write_graph=True, write_images=True)
+    tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
     return tb
 
 
@@ -249,6 +256,83 @@ def make_new_prediction(classifier, target, target_size, cropped=False):
     print(result)
     prediction = mapper(result, target)
     return prediction , path
+
+def voting_prediction(models, target, target_size, cropped=True, testAll = True):
+    wd = get_current_directory()
+    if cropped:
+        path1 = wd + '\\UTKFace_pred\\'#for cropped
+    else:
+        path1 = wd + '\part2\\'#for non-cropped
+
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    len_ = len(onlyfiles)
+    if testAll == False:
+
+        random_pic = Path(random.choice(onlyfiles))
+        path = path1 / random_pic
+
+        test_image = image.load_img(path, target_size=(target_size, target_size))
+        test_image = image.img_to_array(test_image)
+        test_image = np.expand_dims(test_image, axis=0)
+
+        i=0
+        preds = []
+        for model in models:
+            result = model.predict(test_image)
+            preds.append(result[0])
+
+        pred = np.average(preds, axis=0)
+
+        if np.argmax(pred) == 0:
+            x='White'
+        elif np.argmax(pred) == 1:
+            x='Black'
+        elif np.argmax(pred) == 2:
+            x='Asian'
+        elif np.argmax(pred) == 3:
+            x='Indian'
+        else:
+            x='Other'
+
+        return x, path
+
+    else:
+        ground_truth = []
+        all_preds = []
+        for i in range(len_):
+            random_pic = Path(random.choice(onlyfiles))
+            path = path1 / random_pic
+            item = str(random_pic)
+            a = item.split("_", 3)
+            age, gender, ethnic, time = a[0], a[1], a[2], a[3]
+
+            if target=='age':
+                ground_truth.append(int(age))
+            elif target=='gender':
+                ground_truth.append(int(gender))
+            else:
+                ground_truth.append(int(ethnic))
+
+            test_image = image.load_img(path, target_size=(target_size, target_size))
+            test_image = image.img_to_array(test_image)
+            test_image = np.expand_dims(test_image, axis=0)
+
+            i = 0
+            preds = []
+            for model in models:
+                result = model.predict(test_image)
+                preds.append(result[0])
+            pred = np.average(preds, axis=0)
+            all_preds.append(np.argmax(pred))
+
+        if target == 'age':
+            print(np.square(np.subtract(np.array(ground_truth), np.array(all_preds))))
+            mse = np.mean(np.square(np.subtract(np.array(ground_truth), np.array(all_preds))))
+            print(mse)
+        else:
+            cm = confusion_matrix(ground_truth, all_preds)
+            print(classification_report(ground_truth, all_preds))
+            print(cm)
 
 
 

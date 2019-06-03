@@ -27,9 +27,9 @@ os.chdir(project_dir)
 ## Parameters
 target_size = 128
 batch_size = 32
-target =      'ethnic'          # 'ethnic' or 'age' or 'gender'
+target = 'age'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'categorical' #'sparse'      # 'binary','categorical, 'other'
+class_mode = 'other' #'sparse'      # 'binary','categorical, 'other'
 
 # target = ['ethnic', 'gender']
 
@@ -37,7 +37,7 @@ class_mode = 'categorical' #'sparse'      # 'binary','categorical, 'other'
 
 #cropped setup:
 path1 = project_dir / 'UTKFace'
-train_df = prepare_input_data(path1, 18966)
+train_df = prepare_input_data(path1, 18)
 #non-cropped setup:
 #path1 = project_dir / 'part1' # see who easy we can join paths? no need for anything extra regardless your operating system!
 #train_df = prepare_input_data(path1, 10000)
@@ -49,7 +49,7 @@ training_set = create_set(train_datagen, train_df, path1, target_size, batch_siz
 
 #cropped setup:
 path3 = project_dir / 'UTKFace_test'
-test_df = prepare_input_data(path3, 4694)
+test_df = prepare_input_data(path3, 46)
 #non-cropped setup:
 #path3 = project_dir / 'part3'
 #test_df = prepare_input_data(path3, 3000)
@@ -62,21 +62,21 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 #
 #
 #
-# params = {
-#     'kernel_size': 3,
-#     'stride': 1,
-#     'pooling_size': 2,
-#     'padding': "same",
-#     'nr_of_channel': 32,
-#     'pooling_type': 'Max',
-#     'number_of_convPool_layer': 2,
-#     'dropout_rate': 0.4,
-#     'activation_function': 'relu',
-#     'input_size': target_size,
-#     'hidden_neurons': 128,
-#     'color_scale': 'rgb',
-# }
-#
+params = {
+    'kernel_size': 3,
+    'stride': 1,
+    'pooling_size': 2,
+    'padding': "same",
+    'nr_of_channel': 32,
+    'pooling_type': 'Max',
+    'number_of_convPool_layer': 2,
+    'dropout_rate': 0.4,
+    'activation_function': 'relu',
+    'input_size': target_size,
+    'hidden_neurons': 128,
+    'color_scale': 'rgb',
+}
+
 # model = CnnSolver(class_mode, 'model_fancy_6')
 # model.build_model(params)
 #
@@ -106,70 +106,107 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 
 # 2x Con => Max // 3x Con => Max // 2x Con => Con => Max
 
-params = {
-    'kernel_size': 3,
-    'stride': 1,
-    'pooling_size': 2,
-    'padding': "same",
-    'nr_of_channel': 32,
-    'pooling_type': 'Max',
-    'number_of_convPool_layer': 5,
-    'dropout_rate': 0.4,
-    'activation_function': 'relu',
-    'input_size': target_size,
-    'hidden_neurons': 128,
-    'color_scale': 'rgb',
-}
+# params = {
+#     'kernel_size': 3,
+#     'stride': 1,
+#     'pooling_size': 2,
+#     'padding': "same",
+#     'nr_of_channel': 32,
+#     'pooling_type': 'Max',
+#     'number_of_convPool_layer': 5,
+#     'dropout_rate': 0.4,
+#     'activation_function': 'relu',
+#     'input_size': target_size,
+#     'hidden_neurons': 256,
+#     'color_scale': 'rgb',
+# }
+#
+# model = CnnSolver(class_mode, 'model_fancy_2lay')
+# model.build_model(params)
+#
+# nr_of_epochs = 2
+# steps_per_epoch = 5
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
-model = CnnSolver(class_mode, 'model_fancy_2lay')
-model.build_model(params)
 
-nr_of_epochs = 1#20
-steps_per_epoch = 2#50
+# params = {
+#     'kernel_size': 3,
+#     'stride': 1,
+#     'pooling_size': 2,
+#     'padding': "same",
+#     'nr_of_channel': 64,
+#     'pooling_type': 'Max',
+#     'number_of_convPool_layer': 4,
+#     'dropout_rate': 0.4,
+#     'activation_function': 'relu',
+#     'input_size': target_size,
+#     'hidden_neurons': 1024,
+#     'color_scale': 'rgb',
+# }
+#
+# model = CnnSolver(class_mode, 'model_fancy_3lay')
+# model.build_model(params)
+#
+#
+# nr_of_epochs = 20
+# steps_per_epoch = 100
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
-
-
-params = {
-    'kernel_size': 3,
-    'stride': 1,
-    'pooling_size': 2,
-    'padding': "same",
-    'nr_of_channel': 64,
-    'pooling_type': 'Max',
-    'number_of_convPool_layer': 4,
-    'dropout_rate': 0.4,
-    'activation_function': 'relu',
-    'input_size': target_size,
-    'hidden_neurons': 1024,
-    'color_scale': 'rgb',
-}
-
-model = CnnSolver(class_mode, 'model_fancy_3lay')
-model.build_model(params)
-
-nr_of_epochs = 1#20
-steps_per_epoch = 2#50
 
 #### Load Model
 
-# model = CnnSolver(class_mode, 'model_fancy_5')
+# nr_of_epochs = 20
+# steps_per_epoch = 100
+#
+# model = CnnSolver(class_mode, 'model_fancy_2lay')
 # model.load_model()
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 #### Train Model
 
 
-nr_of_epochs = 1#5
-steps_per_epoch = 2#21
-
-model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+# nr_of_epochs = 1#5
+# steps_per_epoch = 2#21
+#
+# model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
 #### Make prediction
 
 
-prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
-plot_new_pred(prediction, path)
+# prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
+# plot_new_pred(prediction, path)
 
 
+
+####################################
+#####  Ensembling -> Voting    #####
+####################################
+
+nr_of_epochs = 2
+steps_per_epoch = 4
+
+model1 = CnnSolver(class_mode, 'age1')
+model1.build_model(params)
+model1.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+
+# model1.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+
+model2 = CnnSolver(class_mode, 'age2')
+model2.build_model(params)
+model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+
+# model2.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+
+model3 = CnnSolver(class_mode, 'age3')
+model3.build_model(params)
+model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+
+# model3.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+
+models = [model1.model,model2.model, model3.model]
+
+voting_prediction(models, target, target_size)
 

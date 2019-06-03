@@ -27,28 +27,27 @@ class Group12Net:
 
         # CONV => RELU => POOL
         x = Conv2D(32, (3, 3), padding="same")(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization(axis=chanDim)(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(3, 3))(x)
-        x = Dropout(0.25)(x)
+        # x = Dropout(0.25)(x)
 
         # (CONV => RELU) * 2 => POOL
-        x = Conv2D(64, (3, 3), padding="same")(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization(axis=chanDim)(x)
-        x = Conv2D(64, (3, 3), padding="same")(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization(axis=chanDim)(x)
-        x = MaxPooling2D(pool_size=(2, 2))(x)
-        x = Dropout(0.25)(x)
+        # x = Conv2D(64, (3, 3), padding="same")(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization(axis=chanDim)(x)
+        # x = Conv2D(64, (3, 3), padding="same")(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization(axis=chanDim)(x)
+        # x = MaxPooling2D(pool_size=(2, 2))(x)
+        # x = Dropout(0.25)(x)
 
         # define a branch of output layers for the number of different
         # clothing categories (i.e., shirts, jeans, dresses, etc.)
         x = Flatten()(x)
         x = Dense(256)(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization()(x)
-        x = Dropout(0.35)(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization()(x)
         x = Dense(numGender)(x)
         x = Activation(finalAct, name="gender_output")(x)
 
@@ -59,26 +58,26 @@ class Group12Net:
 
         x = inputs
         # CONV => RELU => POOL
-        x = Conv2D(16, (3, 3), padding="same")(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization(axis=chanDim)(x)
-        x = MaxPooling2D(pool_size=(3, 3))(x)
-        x = Dropout(0.25)(x)
+        # x = Conv2D(16, (3, 3), padding="same")(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization(axis=chanDim)(x)
+        # x = MaxPooling2D(pool_size=(3, 3))(x)
+        # x = Dropout(0.25)(x)
 
         # CONV => RELU => POOL
         x = Conv2D(32, (3, 3), padding="same")(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization(axis=chanDim)(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
-        x = Dropout(0.25)(x)
+        # x = Dropout(0.25)(x)
 
         # define a branch of output layers for the number of different
         # colors (i.e., red, black, blue, etc.)
         x = Flatten()(x)
         x = Dense(128)(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization()(x)
-        x = Dropout(0.35)(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization()(x)
+        # x = Dropout(0.35)(x)
         x = Dense(numRace)(x)
         x = Activation(finalAct, name="race_output")(x)
 
@@ -90,27 +89,27 @@ class Group12Net:
         x = inputs
         # CONV => RELU => POOL
         x = Conv2D(16, (3, 3), padding="same")(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization(axis=chanDim)(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(3, 3))(x)
-        x = Dropout(0.25)(x)
+        # x = Dropout(0.25)(x)
 
         # CONV => RELU => POOL
         x = Conv2D(32, (3, 3), padding="same")(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization(axis=chanDim)(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
-        x = Dropout(0.25)(x)
+        # x = Dropout(0.25)(x)
 
         # define a branch of output layers for the number of different
         # colors (i.e., red, black, blue, etc.)
         x = Flatten()(x)
         x = Dense(128)(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization()(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization()(x)
         x = Dense(64)(x)
-        x = Activation("relu")(x)
-        x = BatchNormalization()(x)
+        # x = Activation("relu")(x)
+        # x = BatchNormalization()(x)
         x = Dense(1, name="age_output", kernel_initializer='normal', activation='linear')(x)
         return x
 
@@ -142,7 +141,7 @@ class Group12Net:
 
         # initialize the optimizer and compile the model
         # print("[INFO] compiling model...")
-        # print(self.model.summary())
+        print(self.model.summary())
         # print("[INFO] Model compiled ...")
 
         # return the constructed network architecture

@@ -76,10 +76,12 @@ class CnnSolver():
         print(classifier.summary())
         self.model = classifier
 
+    def compile_model(self,loss,metrics):
+        self.model.compile(optimizer = 'adam', loss = loss, metrics = metrics)
 
-    def load_model(self):
+    def load_model(self, loss, metrics ):
         self.model = load_model(self.model_name)
-        self.model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+        self.compile_model(loss, metrics)
         print(self.model.summary())
 
 
@@ -98,8 +100,8 @@ class CnnSolver():
             history = callback_history()
             earlyStop = callbackEarlyStopping()
             checkPoint = callbackCheckpoint(self.model_name)
-            #tensor = callbackTensor()
-            callbacks = [csv_logger, history, earlyStop, checkPoint]#, tensor]
+            tensor = callbackTensor()
+            callbacks = [csv_logger, history, earlyStop, checkPoint, tensor]
 
             history = self.model.fit_generator(training_set,
                                      steps_per_epoch=steps_per_epoch,
