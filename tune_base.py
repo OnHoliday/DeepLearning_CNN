@@ -25,7 +25,7 @@ target_size = 128
 batch_size = 32
 target = 'gender'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'binary'      # 'binary'
+class_mode = 'binary'      # 'categorical', 'other', 'binary'
 
 
 for i in range(3):#average over 3 runs
@@ -82,11 +82,7 @@ for i in range(3):#average over 3 runs
             model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
-    #### Make prediction
 
-
-#prediction, path = make_new_prediction(model.model, target, target_size)
-#plot_new_pred(prediction, path)
 
 
 

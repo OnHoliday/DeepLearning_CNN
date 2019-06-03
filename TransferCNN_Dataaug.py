@@ -24,9 +24,9 @@ os.chdir(project_dir)
 
 
 ## Parameters
-target_size = 64
+target_size = 224
 batch_size = 64
-im_width = im_height = 224
+
 
 ## Training data
 
@@ -53,13 +53,13 @@ test_imgen = ImageDataGenerator(rescale = 1./255)
 
 color_mode = 'rgb'
 
-train_gen = gnerate_genarator_multi(input_imgen, train_df, path1, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode, class_mode)
-test_gen = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode, class_mode)
+train_gen = gnerate_genarator_multi(input_imgen, train_df, path1, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
+test_gen = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
 
 
 ## building the model ##
 
-model = built_transfer()
+model = built_transfer()#last layer
 
 from keras.callbacks import ModelCheckpoint
 
@@ -80,9 +80,8 @@ model.fit_generator(train_gen,
                               validation_steps=len(test_df) // batch_size)
 
 
-save_model(model, 'transfer')
+save_model(model, 'transfer')#last layer
 
-# model = load_model_('lukas_multi.h5')
 
-prediction, path = make_new_p_multi(model)
-plot_new_pred(prediction, path)
+# prediction, path = make_new_p_multi(model)
+# plot_new_pred(prediction, path)
