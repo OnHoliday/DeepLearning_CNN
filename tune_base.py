@@ -7,15 +7,7 @@ from pathlib import Path, PureWindowsPath # please check this medium article!! h
 
 
 
-if getpass.getuser() == 'Konrad':
-    project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
-elif getpass.getuser() == 'fruechtnicht':
-    project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
-else:
-    raise ValueError('Check you own user name and add proper elif statement !!!')
-# if you have a windows computer please specify your project path as Konrad, if not as fruechtnicht
-os.chdir(project_dir)
-
+project_dir = get_path()
 
 #### Input data preprocessing => creating training and test set
 
@@ -43,43 +35,72 @@ for i in range(3):#average over 3 runs
     test_datagen = create_testingDataGenerator_instance()
     test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, target, color_mode, class_mode)
 
-    params_to_tune={'kernel_size':[3,5,7],
-                    'stride': [1,2],
-                    'nr_of_channel': [16,64,128],
-                    'hidden_neurons': [1024,16,256]
-                    }
-
     df = pd.DataFrame
-    for parameter, values in params_to_tune.items():
 
-        params = {
-            'kernel_size': 3,
-            'stride': 1,
-            'pooling_size': 2,
-            'padding': "same",
-            'nr_of_channel': 32,
-            'pooling_type': 'Max',
-            'number_of_convPool_layer': 3,
-            'dropout_rate': 0.4,
-            'activation_function': 'relu',
-            'input_size': target_size,
-            'hidden_neurons': 256,
-            'color_scale': 'rgb',
-        }
+    params = {
+        'kernel_size': 3,
+        'stride': 1,
+        'pooling_size': 2,
+        'padding': "same",
+        'nr_of_channel': 32,
+        'pooling_type': 'Max',
+        'number_of_convPool_layer': 4,
+        'dropout_rate': 0.3,
+        'activation_function': 'relu',
+        'input_size': target_size,
+        'hidden_neurons': 1024,
+        'color_scale': 'rgb',
+    }
 
-        for value in values:
-            params[parameter] = value
+    params2 = {
+        'kernel_size': 3,
+        'stride': 1,
+        'pooling_size': 2,
+        'padding': "same",
+        'nr_of_channel': 32,
+        'pooling_type': 'Max',
+        'number_of_convPool_layer': 2,
+        'dropout_rate': 0.3,
+        'activation_function': 'relu',
+        'input_size': target_size,
+        'hidden_neurons': 1024,
+        'color_scale': 'rgb',
+    }
 
-            modelName = 'testing' + '_' + target + '_' + parameter + '_' + str(value) + '_' + str(i)
-            model = CnnSolver(class_mode, modelName)
-            model.build_model(params)
+    params3 = {
+        'kernel_size': 3,
+        'stride': 1,
+        'pooling_size': 2,
+        'padding': "same",
+        'nr_of_channel': 32,
+        'pooling_type': 'Max',
+        'number_of_convPool_layer': 3,
+        'dropout_rate': 0.3,
+        'activation_function': 'relu',
+        'input_size': target_size,
+        'hidden_neurons': 1024,
+        'color_scale': 'rgb',
+    }
 
-            #### Train Model
+    modelName = 'testing' + '_' + target + '_ConvConvPool_' + str(i)
+    model1 = CnnSolver(class_mode, modelName)
+    model1.build_model_cnn_cnn_pool(params3)
 
-            nr_of_epochs = 30
-            steps_per_epoch = 50
+    modelName = 'testing' + '_' + target + '__4ConvPool_' + str(i)
+    model2 = CnnSolver(class_mode, modelName)
+    model2.build_model(params)
 
-            model.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+    modelName = 'testing' + '_' + target + '__2ConvPool__' + '_' + str(i)
+    model3 = CnnSolver(class_mode, modelName)
+    model3.build_model(params2)
+    #### Train Model
+
+    nr_of_epochs = 30
+    steps_per_epoch = 50
+
+    model1.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+    model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+    model3.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 
 

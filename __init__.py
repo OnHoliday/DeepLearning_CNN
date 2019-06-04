@@ -5,25 +5,12 @@ from plots import plot_new_pred
 import getpass
 from pathlib import Path, PureWindowsPath # please check this medium article!! https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 
-
-
-if getpass.getuser() == 'Konrad':
-    project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
-elif getpass.getuser() == 'fruechtnicht':
-    project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
-elif getpass.getuser() == 'dominika.leszko':
-    project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
-elif getpass.getuser() == 'jojo':
-    project_dir = Path(r'C:\Users\jojo\Documents\Uni\Second Semester\Deep Learning\Project\Master')
-else:
-    raise ValueError('Check you own user name and add proper elif statement !!!')
-# if you have a windows computer please specify your project path as Konrad, if not as fruechtnicht
-
+project_dir = get_path()
 
 #### Input data preprocessing => creating training and test set
 
 #Organize cropped files
-organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
+# organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
 
 
 ## Parameters
@@ -178,7 +165,7 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 #### Make prediction
 
 
-# prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
+prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
 # plot_new_pred(prediction, path)
 
 
