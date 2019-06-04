@@ -15,9 +15,9 @@ project_dir = get_path()
 ## Parameters
 target_size = 128
 batch_size = 32
-target = 'gender'          # 'ethnic' or 'age' or 'gender'
+target = 'age'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'binary'      # 'categorical', 'other', 'binary'
+class_mode = 'other'      # 'categorical', 'other', 'binary'
 
 
 for i in range(3):#average over 3 runs
