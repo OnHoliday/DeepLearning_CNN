@@ -45,9 +45,9 @@ def built_transfer(Unfreeze_some=False):
 
     if Unfreeze_some:
 
-        for layer in model.layers[:80]:
+        for layer in model.layers[:74]:
             layer.trainable=False
-        for layer in model.layers[80:]:
+        for layer in model.layers[74:]:
             layer.trainable=True
 
     else:

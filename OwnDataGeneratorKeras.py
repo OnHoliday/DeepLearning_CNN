@@ -69,8 +69,8 @@ params = {'dim': (32,32,32),
           'shuffle': True}
 
 # Datasets
-partition = # IDs
-labels = # Labels
+# partition = # IDs
+# labels = # Labels
 
 # Generators
 training_generator = DataGenerator(partition['train'], labels, **params)
