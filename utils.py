@@ -150,7 +150,7 @@ def callbackEarlyStopping():
 
 def callbackCheckpoint(model_name):
     model_name_h5 = model_name + '_checkPoint.h5'
-    mc = ModelCheckpoint(model_name, monitor='val_loss', mode='min', save_best_only=True)
+    mc = ModelCheckpoint(model_name_h5, monitor='val_loss', mode='min', save_best_only=True)
     return mc
 
 def callbackTensor():

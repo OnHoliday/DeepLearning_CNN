@@ -199,7 +199,7 @@ def built_multi(n_races,im_width):
     _ = Dropout(0.3)(_)
     _ = Dense(units=128, activation='relu')(_)
     _ = Dropout(0.3)(_)
-    age_output = Dense(units=1, activation='sigmoid', name='age_output')(_)
+    age_output = Dense(units=1, name='age_output')(_)
 
     # for race prediction
     _ = Dense(units=256, activation='relu')(bottleneck)

@@ -71,9 +71,10 @@ from keras.callbacks import ModelCheckpoint
 
 
 
-csv_logger = create_cv_logger('lukas_multi')
+csv_logger = create_cv_logger('lukas_multioutput')
+checkpoint = callbackCheckpoint('lukas_multioutput')
 #tensorcall = callbackTensor()
-callbacks = [csv_logger]#, tensorcall]
+callbacks = [csv_logger, checkpoint]#, tensorcall]
 
 #K.set_session(K.tf.Session(config=K.tf.ConfigProto(intra_op_‌​parallelism_threads=‌​32, inter_op_parallelism_threads=32)))
 
@@ -82,13 +83,13 @@ model.fit_generator(train_gen,
                               steps_per_epoch=len(train_df) // batch_size,
                               epochs=30,
                               callbacks=callbacks,
-                              workers=1,
-                              # use_multiprocessing=True,
+                              workers=12,
+                              use_multiprocessing=True,
                               validation_data=test_gen,
                               validation_steps=len(test_df) // batch_size)
 
 
-save_model(model, 'lukas_multi')
+save_model(model, 'lukas_multioutput')
 
 # model = load_model_('lukas_multi.h5')
 
