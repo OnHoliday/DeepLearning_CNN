@@ -51,9 +51,13 @@ class Group12Net:
         # define a branch of output layers for the number of different
         # clothing categories (i.e., shirts, jeans, dresses, etc.)
         x = Flatten()(x)
-        x = Dense(256)(x)
+        x = Dense(512)(x)
         x = Activation("relu")(x)
         x = BatchNormalization()(x)
+        x = Dense(128)(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization()(x)
+
         x = Dense(1)(x)
         x = Activation('sigmoid', name="gender_output")(x)
 
@@ -92,10 +96,13 @@ class Group12Net:
         # define a branch of output layers for the number of different
         # colors (i.e., red, black, blue, etc.)
         x = Flatten()(x)
+        x = Dense(512)(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization()(x)
         x = Dense(128)(x)
         x = Activation("relu")(x)
         x = BatchNormalization()(x)
-        x = Dropout(0.35)(x)
+
         x = Dense(numRace)(x)
         x = Activation(finalAct, name="race_output")(x)
 
@@ -134,10 +141,10 @@ class Group12Net:
         # define a branch of output layers for the number of different
         # colors (i.e., red, black, blue, etc.)
         x = Flatten()(x)
-        x = Dense(128)(x)
+        x = Dense(512)(x)
         x = Activation("relu")(x)
         x = BatchNormalization()(x)
-        x = Dense(64)(x)
+        x = Dense(128)(x)
         x = Activation("relu")(x)
         x = BatchNormalization()(x)
         x = Dense(1, name="age_output", kernel_initializer='normal', activation='linear')(x)

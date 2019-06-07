@@ -15,9 +15,9 @@ project_dir = get_path()
 ## Parameters
 target_size = 128
 batch_size = 32
-target = 'age'          # 'ethnic' or 'age' or 'gender'
+target = 'gender'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'other'      # 'categorical', 'other', 'binary'
+class_mode = 'binary'      # 'categorical', 'other', 'binary'
 
 
 for i in range(3):#average over 3 runs
@@ -86,11 +86,11 @@ for i in range(3):#average over 3 runs
     model1 = CnnSolver(class_mode, modelName)
     model1.build_model_cnn_cnn_pool(params3)
 
-    modelName = 'testing' + '_' + target + '__4ConvPool_' + str(i)
+    modelName = 'testing' + '_' + target + '_4ConvPool_' + str(i)
     model2 = CnnSolver(class_mode, modelName)
     model2.build_model(params)
 
-    modelName = 'testing' + '_' + target + '__2ConvPool__' + '_' + str(i)
+    modelName = 'testing' + '_' + target + '_2ConvPool_'  + str(i)
     model3 = CnnSolver(class_mode, modelName)
     model3.build_model(params2)
     #### Train Model
