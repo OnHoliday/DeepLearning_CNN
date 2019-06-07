@@ -59,22 +59,24 @@ test_gen = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batc
 
 ## building the model ##
 
-model = built_transfer()#last layer
+model = built_transfer(Unfreeze_some=True)#last layer
 
 from keras.callbacks import ModelCheckpoint
 
 csv_logger = create_cv_logger('transfer')
-tensorcall = callbackTensor()
-callbacks = [csv_logger, tensorcall]
+#tensorcall = callbackTensor()
+checkpoint = callbackCheckpoint('transfer')
+
+callbacks = [csv_logger, checkpoint]
 
 #K.set_session(K.tf.Session(config=K.tf.ConfigProto(intra_op_‌​parallelism_threads=‌​32, inter_op_parallelism_threads=32)))
 
 
 model.fit_generator(train_gen,
                               steps_per_epoch=len(train_df) // batch_size,
-                              epochs=20,
+                              epochs=30,
                               callbacks=callbacks,
-                              workers=6,
+                              workers=12,
                               use_multiprocessing=True,
                               validation_data=test_gen,
                               validation_steps=len(test_df) // batch_size)
