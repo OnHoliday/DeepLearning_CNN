@@ -30,6 +30,7 @@ class CnnSolver():
         self.color_scale = color_scale
 
 
+
     def build_model(self, params):
         self.unzip_parameters(**params)
         if self.color_scale == 'grayscale':
@@ -76,6 +77,54 @@ class CnnSolver():
         print(classifier.summary())
         self.model = classifier
 
+    def build_model_cnn_cnn_pool(self, params):
+        self.unzip_parameters(**params)
+        if self.color_scale == 'grayscale':
+            dimmesionality = 1
+        else:
+            dimmensionality = 3
+
+        classifier = Sequential()
+
+        iteration = self.number_of_convPool_layer
+        while iteration > 0:
+            classifier.add(
+                Conv2D(self.nr_of_channel, (self.kernel_size, self.kernel_size), strides=(self.stride, self.stride),
+                       padding=self.padding, input_shape=(self.input_size, self.input_size, dimmensionality),
+                       activation=self.activation_function))
+            classifier.add(BatchNormalization())
+            classifier.add(
+                Conv2D(self.nr_of_channel, (self.kernel_size, self.kernel_size), strides=(self.stride, self.stride),
+                       padding=self.padding, input_shape=(self.input_size, self.input_size, dimmensionality),
+                       activation=self.activation_function))
+
+            classifier.add(MaxPooling2D(pool_size=(self.pooling_size, self.pooling_size)))
+            iteration -= 1
+
+        classifier.add(Flatten())
+        classifier.add(Dense(units=self.hidden_neurons, activation=self.activation_function))
+        classifier.add(Dropout(self.dropout_rate))
+        classifier.add(Dense(units=int(self.hidden_neurons/2), activation=self.activation_function))
+        classifier.add(Dropout(self.dropout_rate))
+        classifier.add(Dense(units=int(self.hidden_neurons/4), activation=self.activation_function))
+        classifier.add(Dropout(self.dropout_rate))
+        if self.problem_type == 'binary':
+            classifier.add(Dense(units=1, activation='sigmoid'))
+            classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+        elif self.problem_type == 'other':
+            classifier.add(Dense(units=1))#, activation='sigmoid'))
+            classifier.compile(optimizer='adam', loss='mse', metrics=['mae'])
+        else:
+            classifier.add(Dense(units=5, activation='softmax'))
+            classifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+        print(classifier.summary())
+        self.model = classifier
+
+
+
+
     def compile_model(self,loss,metrics):
         self.model.compile(optimizer = 'adam', loss = loss, metrics = metrics)
 
@@ -98,10 +147,10 @@ class CnnSolver():
         if iFcallbacks:
             csv_logger = create_cv_logger(self.model_name)
             history = callback_history()
-            #earlyStop = callbackEarlyStopping()
+            # earlyStop = callbackEarlyStopping()
             checkPoint = callbackCheckpoint(self.model_name)
-            #tensor = callbackTensor()
-            callbacks = [csv_logger, history, checkPoint, ]#, tensor]
+            # tensor = callbackTensor()
+            callbacks = [csv_logger, history, checkPoint]
 
             history = self.model.fit_generator(training_set,
                                      steps_per_epoch=steps_per_epoch,

@@ -18,17 +18,18 @@ from sklearn.metrics import confusion_matrix, classification_report
 import glob
 
 
-if getpass.getuser() == 'Konrad':
-    project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
-elif getpass.getuser() == 'fruechtnicht':
-    project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
-elif getpass.getuser() == 'dominika.leszko':
-    project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
-elif getpass.getuser() == 'jojo':
-    project_dir = Path(r'C:\Users\jojo\Documents\Uni\Second Semester\Deep Learning\Project\Master')
-else:
-    raise ValueError('Check you own user name and add proper elif statement !!!')
-
+def get_path():
+    if getpass.getuser() == 'Konrad':
+        project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
+    elif getpass.getuser() == 'fruechtnicht':
+        project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
+    elif getpass.getuser() == 'dominika.leszko':
+        project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
+    elif getpass.getuser() == 'jojo':
+        project_dir = Path(r'C:\Users\jojo\Documents\Uni\Second Semester\Deep Learning\Project\Master')
+    else:
+        raise ValueError('Check you own user name and add proper elif statement !!!')
+    return project_dir
 
 
 def get_current_directory():
@@ -113,6 +114,9 @@ def save_model(classifier, model_name):
 
 
 def load_model(model_name):
+    project_dir = get_path()
+    wd = get_current_directory()
+    print(wd)
     # load json and create model
     model_name_json = model_name + '.json'
 # Uncoment to use Lucas CVS
@@ -144,9 +148,9 @@ def callback_history():
     history = LossHistory()
     return history
 
-def callbackEarlyStopping():
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4, min_delta=0.0001)
-    return es
+# def callbackEarlyStopping():
+#     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4, min_delta=0.0001)
+#     return es
 
 def callbackCheckpoint(model_name):
     model_name_h5 = model_name + '_checkPoint.h5'
@@ -336,6 +340,47 @@ def voting_prediction(models, target, target_size, cropped=True, testAll = True)
             print(classification_report(ground_truth, all_preds))
             print(cm)
 
+def final_preds(model, target_size, cropped=True):
+
+    wd = get_current_directory()
+    if cropped:
+        path1 = wd + '\\UTKFace_pred\\'#for cropped
+    else:
+        path1 = wd + '\part2\\'#for non-cropped
+
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    len_ = len(onlyfiles)
+
+    df_pred = pd.DataFrame(columns=['gender_truth', 'gender_preds', 'race_truth', 'race_preds', 'age_truth', 'age_preds'])
+
+
+    for i in range(len_):
+        pic = Path(onlyfiles[i])
+        path = path1 / pic
+        item = str(pic)
+        a = item.split("_", 3)
+        age, gender, ethnic, time = a[0], a[1], a[2], a[3]
+
+        ground_truth = [int(gender),int(ethnic),int(age)]
+
+        test_image = image.load_img(path, target_size=(target_size, target_size))
+        test_image = image.img_to_array(test_image)
+        test_image = np.expand_dims(test_image, axis=0)
+
+        result = model.predict(test_image)
+        gender_pred = classifier(result[0][0])
+        race_pred = np.argmax(result[0][1])
+        age_pred = result[0][2]
+        all_preds = [gender_pred,race_pred, age_pred]
+
+        df_pred.loc[i, ['gender_truth', 'gender_preds', 'race_truth', 'race_preds', 'age_truth', 'age_preds']] = ground_truth[0] , all_preds[0], ground_truth[1] , all_preds[1], ground_truth[2] , all_preds[2]
+
+    df_pred.to_csv('final_results_' + model.model_name)
+    print('model_saved')
+
+
+def classifier(n):
+    return lambda: 0 if n < .5 else 0
 
 
 def mapper(result, target):
@@ -387,7 +432,6 @@ def data_generator_cust(df,im_width, im_height, for_training, path, batch_size):
                 images, ages, races, genders = [], [], [], []
         if not for_training:
             break
-
 
 def make_new_p_multi(classifier):
 
