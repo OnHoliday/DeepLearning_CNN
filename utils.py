@@ -16,6 +16,7 @@ import getpass
 import os
 from sklearn.metrics import confusion_matrix, classification_report
 import glob
+from pathlib import Path, PureWindowsPath # please check this medium article!! https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 
 
 def get_path():
@@ -115,15 +116,15 @@ def save_model(classifier, model_name):
 
 def load_model(model_name):
     project_dir = get_path()
-    wd = get_current_directory()
-    print(wd)
+    # wd = get_current_directory()
+    # print(wd)
     # load json and create model
-    model_name_json = model_name + '.json'
-# Uncoment to use Lucas CVS
-#    model_name_type = model_name + '.json'
-#    model_path = project_dir / 'lucas_log_models'/ 'cvs' / model_name_type
-#     json_file = open(model_path, 'r')
-    json_file = open(model_name_json, 'r')
+    # model_name_json = model_name + '.json'
+    # Uncoment to use Lucas CVS
+    model_name_type = model_name + '.json'
+    model_path = project_dir / model_name_type
+    json_file = open(model_path, 'r')
+    # json_file = open(model_name_json, 'r')
     loaded_model_json = json_file.read()
     json_file.close()
 
@@ -132,7 +133,7 @@ def load_model(model_name):
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
     model_name_h5 = model_name + '.h5'
-    model_path = project_dir / 'lucas_log_models' / 'cvs' / model_name_h5
+    model_path = project_dir / model_name_h5
 
     loaded_model.load_weights(model_path)
     print("Loaded model from disk")
@@ -340,8 +341,152 @@ def voting_prediction(models, target, target_size, cropped=True, testAll = True)
             print(classification_report(ground_truth, all_preds))
             print(cm)
 
-def final_preds(model, target_size, cropped=True):
+def final_preds_age(models, target_size, cropped=True):
+    wd = get_path()
+    if cropped:
+        path1 = wd / 'UTKFace_pred'#for cropped
+    else:
+        path1 = wd / 'part2'#for non-cropped
 
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    len_ = len(onlyfiles)
+
+    df_pred = pd.DataFrame(columns=['age_truth', 'age_preds'])
+
+    for i in range(len_):
+        pic = Path(onlyfiles[i])
+        path = path1 / pic
+        item = str(pic)
+        a = item.split("_", 3)
+        age, gender, ethnic, time = a[0], a[1], a[2], a[3]
+
+        ground_truth = int(age)
+        target_size = 128
+        print(path)
+
+        test_image = image.load_img(path, target_size=(target_size, target_size))
+        test_image = image.img_to_array(test_image)
+        test_image = np.expand_dims(test_image, axis=0)
+
+        preds = []
+        for model in models:
+            result = model.predict(test_image)
+            print(result[0])
+            res = int(result[0]/128)
+            print(res)
+            preds.append(res)
+            print(preds)
+        pred = np.average(preds, axis=0)
+
+
+        df_pred.loc[i, ['age_truth', 'age_preds']] = ground_truth , pred
+
+    path1 = wd / 'log' / 'final_results_ensemble_age.csv'
+    df_pred.to_csv(path1)
+
+def final_preds_gender(models, target_size, cropped=True):
+    wd = get_path()
+    if cropped:
+        path1 = wd / 'UTKFace_pred'#for cropped
+    else:
+        path1 = wd / 'part2'#for non-cropped
+
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    len_ = len(onlyfiles)
+
+    df_pred = pd.DataFrame(columns=['gender_truth', 'gender_preds'])
+
+    for i in range(len_):
+        pic = Path(onlyfiles[i])
+        path = path1 / pic
+        item = str(pic)
+        a = item.split("_", 3)
+        age, gender, ethnic, time = a[0], a[1], a[2], a[3]
+
+        ground_truth = int(gender)
+        target_size = 128
+        print(path)
+
+        test_image = image.load_img(path, target_size=(target_size, target_size))
+        test_image = image.img_to_array(test_image)
+        test_image = np.expand_dims(test_image, axis=0)
+
+        preds = []
+        for model in models:
+            result = model.predict(test_image)
+            print(result[0])
+            preds.append(result[0])
+            print(preds)
+        pred = np.average(preds, axis=0)
+
+        if pred < .5:
+            pr = 0
+        else:
+            pr = 1
+
+        df_pred.loc[i, ['gender_truth', 'gender_preds']] = ground_truth , pr
+
+    path1 = wd / 'log' / 'final_results_ensemble_gender.csv'
+    df_pred.to_csv(path1)
+
+
+def final_preds_race(models, target_size, cropped=True):
+    wd = get_path()
+    if cropped:
+        path1 = wd / 'UTKFace_pred'#for cropped
+    else:
+        path1 = wd / 'part2'#for non-cropped
+
+    onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
+    len_ = len(onlyfiles)
+
+    df_pred = pd.DataFrame(columns=['race_truth', 'race_preds'])
+
+    for i in range(len_):
+        pic = Path(onlyfiles[i])
+        path = path1 / pic
+        item = str(pic)
+        a = item.split("_", 3)
+        age, gender, ethnic, time = a[0], a[1], a[2], a[3]
+
+        ground_truth = int(ethnic)
+        target_size = 128
+        print(path)
+
+        test_image = image.load_img(path, target_size=(target_size, target_size))
+        test_image = image.img_to_array(test_image)
+        test_image = np.expand_dims(test_image, axis=0)
+
+        preds = []
+        for model in models:
+            result = model.predict(test_image)
+            print(result[0])
+            res = result[0]
+            preds.append(res)
+            print(preds)
+
+        pred = np.average(preds, axis=0)
+
+        if np.argmax(pred) == 0:
+            x = 0
+        elif np.argmax(pred) == 1:
+            x = 1
+        elif np.argmax(pred) == 2:
+            x = 2
+        elif np.argmax(pred) == 3:
+            x = 3
+        else:
+            x = 4
+        # prediction['Ethnicity'] = x
+
+        df_pred.loc[i, ['race_truth', 'race_preds']] = ground_truth , x
+
+    path1 = wd / 'log' / 'final_results_ensemble_race.csv'
+    df_pred.to_csv(path1)
+
+
+
+def ensamble_median_prediction(models, target, target_size, cropped=True, testAll = True):
     wd = get_current_directory()
     if cropped:
         path1 = wd + '\\UTKFace_pred\\'#for cropped
@@ -351,32 +496,34 @@ def final_preds(model, target_size, cropped=True):
     onlyfiles = [f for f in listdir(path1) if isfile(join(path1, f))]
     len_ = len(onlyfiles)
 
-    df_pred = pd.DataFrame(columns=['gender_truth', 'gender_preds', 'race_truth', 'race_preds', 'age_truth', 'age_preds'])
-
-
+    ground_truth = []
+    all_preds = []
     for i in range(len_):
-        pic = Path(onlyfiles[i])
-        path = path1 / pic
-        item = str(pic)
+        random_pic = Path(random.choice(onlyfiles))
+        path = path1 / random_pic
+        item = str(random_pic)
         a = item.split("_", 3)
         age, gender, ethnic, time = a[0], a[1], a[2], a[3]
 
-        ground_truth = [int(gender),int(ethnic),int(age)]
+        ground_truth.append(int(age))
 
         test_image = image.load_img(path, target_size=(target_size, target_size))
         test_image = image.img_to_array(test_image)
         test_image = np.expand_dims(test_image, axis=0)
 
-        result = model.predict(test_image)
-        gender_pred = classifier(result[0][0])
-        race_pred = np.argmax(result[0][1])
-        age_pred = result[0][2]
-        all_preds = [gender_pred,race_pred, age_pred]
+        i = 0
+        preds = []
+        for model in models:
+            result = model.predict(test_image)
+            preds.append(result[0])
+        pred = np.average(preds, axis=0)
+        all_preds.append(np.argmax(pred))
 
-        df_pred.loc[i, ['gender_truth', 'gender_preds', 'race_truth', 'race_preds', 'age_truth', 'age_preds']] = ground_truth[0] , all_preds[0], ground_truth[1] , all_preds[1], ground_truth[2] , all_preds[2]
 
-    df_pred.to_csv('final_results_' + model.model_name)
-    print('model_saved')
+    print(np.square(np.subtract(np.array(ground_truth), np.array(all_preds))))
+    mse = np.mean(np.square(np.subtract(np.array(ground_truth), np.array(all_preds))))
+    print(mse)
+
 
 
 def classifier(n):

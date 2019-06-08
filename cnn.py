@@ -128,7 +128,7 @@ class CnnSolver():
     def compile_model(self,loss,metrics):
         self.model.compile(optimizer = 'adam', loss = loss, metrics = metrics)
 
-    def load_model(self, loss, metrics ):
+    def load_model(self, loss, metrics):
         self.model = load_model(self.model_name)
         self.compile_model(loss, metrics)
         print(self.model.summary())

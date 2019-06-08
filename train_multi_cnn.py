@@ -52,8 +52,8 @@ training_set2 = create_set(train_datagen, train_df, path1, target_size, batch_si
 
 # initialize our FashionNet multi-output network
 gr12 = Group12Net('multiModel_Konrad2')
-gr12.build(target_size, target_size, numGender=1, numRace=5, finalAct="softmax")
-# gr12.load_model()
+# gr12.build(target_size, target_size, numGender=1, numRace=5, finalAct="softmax")
+gr12.load_model()
 # final_preds(gr12.model, target_size, cropped=True)
 #
 #
@@ -75,23 +75,23 @@ csv_logger = create_cv_logger(gr12.model_name)
 history = callback_history()
 # earlyStop = callbackEarlyStopping()
 checkPoint = callbackCheckpoint(gr12.model_name)
-# tensor = callbackTensor()
-callbacks = [csv_logger, history, checkPoint]
+tensor = callbackTensor()
+callbacks = [csv_logger, history, checkPoint, tensor]
 
 history = gr12.model.fit_generator(inputgenerator,
-                              steps_per_epoch=50,
-                              epochs=30,
+                              steps_per_epoch=1,
+                              epochs=1,
                               validation_data=testgenerator,
-                              validation_steps=30,
+                              validation_steps=1,
                               callbacks=callbacks,
                               use_multiprocessing=False,
                               workers=1,
                               shuffle=True)
 
-df_history = pd.DataFrame(history)
-df_history.to_csv('backup_multioutput.csv')
+# df_history = pd.DataFrame(history)
+# df_history.to_csv('backup_multioutput.csv')
 
-gr12._save_model()
+# gr12._save_model()
 #
 # wd = get_current_directory()
 # path1 = wd + '\part2\\'
