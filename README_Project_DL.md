@@ -5,6 +5,7 @@ Project Objective: age estimation, ethnicity & gender classification
 --------------------------------------------------------------------------------
 ### Dataset: https://drive.google.com/drive/folders/0BxYys69jI14kU0I1YUQyY1ZDRUE?usp=sharing
 
+Download the UTKface.tar.gz.
 Please place the folder in the project directory and run the \__init__.py to organize the data.
 --------------------------------------------------------------------------------
 
@@ -15,8 +16,8 @@ Please place the folder in the project directory and run the \__init__.py to org
 3. Multi output with split convolution in MULTI_SEP.py
 4. Multi output with combined convolution in MULTI_COMB.py
 5. Transfer learning in TRANS_MOBILE_NET.py
+6. Ensemble can be found in ENSEMBLE.py
 6. Plotting code in Plots.ipynb
-7. Plots of testing in log
 
 
 
@@ -29,7 +30,7 @@ https://drive.google.com/drive/folders/1LlI-6sS7RkOQrdNDDunwSXMz963YcFo7?usp=sha
   
 and place the CSVs in the log dir. 
   
-IF you would like to get our trained models, please ask us and we will be happy to provide them to you.
+If you would like to get our trained models, please ask us and we will be happy to provide them to you.
  
 	
 
