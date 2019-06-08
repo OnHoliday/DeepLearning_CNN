@@ -63,11 +63,11 @@ model = built_transfer(Unfreeze_some=True)#last layer
 
 from keras.callbacks import ModelCheckpoint
 
-csv_logger = create_cv_logger('transfer')
-#tensorcall = callbackTensor()
-checkpoint = callbackCheckpoint('transfer')
+csv_logger = create_cv_logger('transfer_test')
+tensorcall = callbackTensor()
+checkpoint = callbackCheckpoint('transfer_test')
 
-callbacks = [csv_logger, checkpoint]
+callbacks = [csv_logger, checkpoint,tensorcall]
 
 #K.set_session(K.tf.Session(config=K.tf.ConfigProto(intra_op_‌​parallelism_threads=‌​32, inter_op_parallelism_threads=32)))
 
@@ -82,7 +82,7 @@ model.fit_generator(train_gen,
                               validation_steps=len(test_df) // batch_size)
 
 
-save_model(model, 'transfer')#last layer
+save_model(model, 'transfer_test')#last layer
 
 
 # prediction, path = make_new_p_multi(model)
