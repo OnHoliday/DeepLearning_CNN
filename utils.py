@@ -29,7 +29,7 @@ def get_path():
     elif getpass.getuser() == 'jojo':
         project_dir = Path(r'C:\Users\jojo\Documents\Uni\Second Semester\Deep Learning\Project\Master')
     else:
-        raise ValueError('Check you own user name and add proper elif statement !!!')
+        raise ValueError('Check you own user name and add your project root with a proper elif statement !!!')
     return project_dir
 
 
@@ -73,7 +73,7 @@ def prepare_input_data(path, nr_of_examples):
     df['age'] = df['age'].astype('float')
     return df
 
-def organize_cropped_files(project_dir):
+def organize_cropped_files(project_dir=get_path()):
     #create train & test directories
     train_dir = os.path.join(project_dir, 'UTKFace')
     os.mkdir(project_dir / 'UTKFace_test')
@@ -159,7 +159,7 @@ def callbackCheckpoint(model_name):
     return mc
 
 def callbackTensor():
-    tb = TensorBoard(log_dir='/logs', histogram_freq=0, write_graph=True, write_images=True)
+    tb = TensorBoard(log_dir=get_path() / 'logs', histogram_freq=0, write_graph=True, write_images=True)
     return tb
 
 

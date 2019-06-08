@@ -12,6 +12,7 @@ from keras.models import Model
 from keras.optimizers import Adam
 
 
+
 #Preprocessing
 def built_transfer(Unfreeze_some=False):
 

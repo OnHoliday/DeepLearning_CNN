@@ -1,13 +1,13 @@
 import os
 from utils import *
-from MULTI_CNN import *
-from cnn import CnnSolver
+from MULTI_CNN_Models import *
+from SINGEL_CNN_Model import CnnSolver
 from plots import plot_new_pred
 import getpass
 from pathlib import Path, PureWindowsPath # please check this medium article!! https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 from keras import backend as K
 import pickle
-from Transfer_Leraning import built_transfer
+from TRANS_MOBILE_NET_Model import built_transfer
 
 
 if getpass.getuser() == 'Konrad':
@@ -63,11 +63,11 @@ model = built_transfer(Unfreeze_some=True)#last layer
 
 from keras.callbacks import ModelCheckpoint
 
-csv_logger = create_cv_logger('transfer')
-#tensorcall = callbackTensor()
-checkpoint = callbackCheckpoint('transfer')
+csv_logger = create_cv_logger('transfer_test')
+tensorcall = callbackTensor()
+checkpoint = callbackCheckpoint('transfer_test')
 
-callbacks = [csv_logger, checkpoint]
+callbacks = [csv_logger, checkpoint,tensorcall]
 
 #K.set_session(K.tf.Session(config=K.tf.ConfigProto(intra_op_‌​parallelism_threads=‌​32, inter_op_parallelism_threads=32)))
 
@@ -82,7 +82,7 @@ model.fit_generator(train_gen,
                               validation_steps=len(test_df) // batch_size)
 
 
-save_model(model, 'transfer')#last layer
+save_model(model, 'transfer_test')#last layer
 
 
 # prediction, path = make_new_p_multi(model)
