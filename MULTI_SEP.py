@@ -3,7 +3,7 @@ import matplotlib
 from utils import *
 from pathlib import Path, PureWindowsPath # please check this medium article!! https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 
-from MULTI_CNN import Group12Net
+from MULTI_CNN_Models import Group12Net
 import numpy as np
 import random
 
@@ -52,36 +52,36 @@ test_df = prepare_input_data(path3, 300)
 
 # initialize our FashionNet multi-output network
 gr12 = Group12Net('multiModel')
-# gr12.build(target_size, target_size, numGender=1, numRace=5, finalAct="softmax")
-gr12.load_model()
-final_preds(gr12.model, target_size, cropped=True)
+gr12.build(target_size, target_size, numGender=1, numRace=5, finalAct="softmax")
+# gr12.load_model()
+# final_preds(gr12.model, target_size, cropped=True)
 #
 #
-# input_imgen = ImageDataGenerator(rescale = 1./255,
-#                                    shear_range = 0.2,
-#                                    zoom_range = 0.2,
-#                                    rotation_range=5.,
-#                                    horizontal_flip = True)
+input_imgen = ImageDataGenerator(rescale = 1./255,
+                                   shear_range = 0.2,
+                                   zoom_range = 0.2,
+                                   rotation_range=5.,
+                                   horizontal_flip = True)
+
+test_imgen = ImageDataGenerator(rescale = 1./255)
 #
-# test_imgen = ImageDataGenerator(rescale = 1./255)
-# #
-# inputgenerator = gnerate_genarator_multi(input_imgen, train_df, path1, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
-# testgenerator = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
-#
-#
-# # tensor = callbackTensor()
-#
-# checkPoint = callbackCheckpoint('tryModel')
-# # tensor = callbackTensor()
-# callbacks = [checkPoint]
-#
-# history = gr12.model.fit_generator(inputgenerator,
-#                               steps_per_epoch=3,
-#                               epochs=2,
-#                               validation_data=testgenerator,
-#                               validation_steps=10,
-#                               callbacks=callbacks,
-#                               shuffle=False)
+inputgenerator = gnerate_genarator_multi(input_imgen, train_df, path1, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
+testgenerator = gnerate_genarator_multi(test_imgen, test_df, path3, target_size, batch_size, 'gender', 'ethnic', 'age', color_mode)
+
+
+# tensor = callbackTensor()
+
+checkPoint = callbackCheckpoint('tryModel')
+tensor = callbackTensor()
+callbacks = [checkPoint, tensor]
+
+history = gr12.model.fit_generator(inputgenerator,
+                              steps_per_epoch=3,
+                              epochs=2,
+                              validation_data=testgenerator,
+                              validation_steps=10,
+                              callbacks=callbacks,
+                              shuffle=False)
 #
 # gr12._save_model()
 #
