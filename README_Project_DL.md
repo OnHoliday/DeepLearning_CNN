@@ -7,6 +7,7 @@ Project Objective: age estimation, ethnicity & gender classification
 
 Download the UTKface.tar.gz.
 Please place the folder in the project directory and run the \__init__.py to organize the data.
+You will need to specify you user name and set the the project root as working directory.
 --------------------------------------------------------------------------------
 
 ### Project steps:
