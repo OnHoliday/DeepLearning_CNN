@@ -11,7 +11,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model
 from keras.optimizers import Adam
 
-#DOMINIKA
 
 
 #Preprocessing

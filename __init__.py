@@ -84,9 +84,9 @@ params = {
 #
 #
 # #### Load Model
-#
-# # model = CnnSolver(class_mode, 'model_fancy_6')
-# # model.load_model()
+
+model = CnnSolver(class_mode, 'model_fancy_6')
+model.load_model()
 #
 # #### Train Model
 #
@@ -100,8 +100,8 @@ params = {
 # #### Make prediction
 #
 #
-# prediction, path = make_new_prediction(model.model, target, target_size)
-# plot_new_pred(prediction, path)
+prediction, path = make_new_prediction(model.model, target, target_size)
+plot_new_pred(prediction, path)
 #
 
 # Comparing 3 different archiecture
