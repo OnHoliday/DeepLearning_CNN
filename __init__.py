@@ -1,37 +1,24 @@
 import os
 from utils import *
-from cnn import CnnSolver
+from SINGEL_CNN_Model import CnnSolver
 from plots import plot_new_pred
 import getpass
 from pathlib import Path, PureWindowsPath # please check this medium article!! https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 
-
-
-if getpass.getuser() == 'Konrad':
-    project_dir = Path(PureWindowsPath('D:\\DeepLearningProject'))
-elif getpass.getuser() == 'fruechtnicht':
-    project_dir = Path('/Users/fruechtnicht/NOVA/M.Sc_Data_Science_and_Advanced_Analytics/Semester2/Deep_Learning/Project/project_dir')
-elif getpass.getuser() == 'dominika.leszko':
-    project_dir = Path(r'C:\Users\dominika.leszko\Desktop\NOVAIMS\SEMESTER2\Deep Learinng\PROJECT\git_repo')
-elif getpass.getuser() == 'jojo':
-    project_dir = Path(r'C:\Users\jojo\Documents\Uni\Second Semester\Deep Learning\Project\Master')
-else:
-    raise ValueError('Check you own user name and add proper elif statement !!!')
-# if you have a windows computer please specify your project path as Konrad, if not as fruechtnicht
-
+project_dir = get_path()
 
 #### Input data preprocessing => creating training and test set
 
 #Organize cropped files
-#organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
+# organize_cropped_files(project_dir)#<-------------execute only once after you moved UTKFace folder to your project_dir
 
 
 ## Parameters
 target_size = 128
 batch_size = 32
-target = 'age'          # 'ethnic' or 'age' or 'gender'
+target = 'ethnic'          # 'ethnic' or 'age' or 'gender'
 color_mode = 'rgb'              #  'grayscale'
-class_mode = 'other' #'sparse'      # 'binary','categorical, 'other'
+class_mode = 'categorical'  #'sparse'      # 'binary','categorical, 'other'
 
 # target = ['ethnic', 'gender']
 
@@ -64,21 +51,21 @@ test_set = create_set(test_datagen, test_df, path3, target_size, batch_size, tar
 #
 #
 #
-params = {
-    'kernel_size': 3,
-    'stride': 1,
-    'pooling_size': 2,
-    'padding': "same",
-    'nr_of_channel': 32,
-    'pooling_type': 'Max',
-    'number_of_convPool_layer': 2,
-    'dropout_rate': 0.4,
-    'activation_function': 'relu',
-    'input_size': target_size,
-    'hidden_neurons': 128,
-    'color_scale': 'rgb',
-}
-
+# params = {
+#     'kernel_size': 3,
+#     'stride': 1,
+#     'pooling_size': 2,
+#     'padding': "same",
+#     'nr_of_channel': 32,
+#     'pooling_type': 'Max',
+#     'number_of_convPool_layer': 2,
+#     'dropout_rate': 0.4,
+#     'activation_function': 'relu',
+#     'input_size': target_size,
+#     'hidden_neurons': 128,
+#     'color_scale': 'rgb',
+# }
+#
 # model = CnnSolver(class_mode, 'model_fancy_6')
 # model.build_model(params)
 #
@@ -178,7 +165,7 @@ plot_new_pred(prediction, path)
 #### Make prediction
 
 
-# prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
+prediction, path = make_new_prediction(model.model, target, target_size, cropped=True)
 # plot_new_pred(prediction, path)
 
 
@@ -187,23 +174,97 @@ plot_new_pred(prediction, path)
 #####  Ensembling -> Voting    #####
 ####################################
 
+# nr_of_epochs = 10
+# steps_per_epoch = 50
+#
+# model1 = CnnSolver(class_mode, 'age1')
+# model1.build_model(params)
+# model1.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+#
+# # model1.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+#
+# model2 = CnnSolver(class_mode, 'age2')
+# model2.build_model(params)
+# model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+#
+# # model2.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+#
+# model3 = CnnSolver(class_mode, 'age3')
+# model3.build_model(params)
+# model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
+#
+# # model3.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
+#
+# models = [model1.model,model2.model, model3.model]
+#
+# voting_prediction(models, target, target_size)
+
+
+####################################
+#####  Testing different architecture    #####
+####################################
+
+params1 = {
+    'kernel_size': 3,
+    'stride': 1,
+    'pooling_size': 2,
+    'padding': "same",
+    'nr_of_channel': 32,
+    'pooling_type': 'Max',
+    'number_of_convPool_layer': 1,
+    'dropout_rate': 0.3,
+    'activation_function': 'relu',
+    'input_size': target_size,
+    'hidden_neurons': 256,
+    'color_scale': 'rgb',
+}
+params2 = {
+    'kernel_size': 3,
+    'stride': 1,
+    'pooling_size': 2,
+    'padding': "same",
+    'nr_of_channel': 32,
+    'pooling_type': 'Max',
+    'number_of_convPool_layer': 4,
+    'dropout_rate': 0.3,
+    'activation_function': 'relu',
+    'input_size': target_size,
+    'hidden_neurons': 256,
+    'color_scale': 'rgb',
+}
+params3 = {
+    'kernel_size': 3,
+    'stride': 1,
+    'pooling_size': 2,
+    'padding': "same",
+    'nr_of_channel': 32,
+    'pooling_type': 'Max',
+    'number_of_convPool_layer': 3,
+    'dropout_rate': 0.3,
+    'activation_function': 'relu',
+    'input_size': target_size,
+    'hidden_neurons': 256,
+    'color_scale': 'rgb',
+}
+
+
 nr_of_epochs = 2
 steps_per_epoch = 4
 
-model1 = CnnSolver(class_mode, 'age1')
-model1.build_model(params)
+model1 = CnnSolver(class_mode, 'ethnic1')
+model1.build_model(params1)
 model1.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 # model1.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
-model2 = CnnSolver(class_mode, 'age2')
-model2.build_model(params)
+model2 = CnnSolver(class_mode, 'ethnic2')
+model2.build_model(params2)
 model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 # model2.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
-model3 = CnnSolver(class_mode, 'age3')
-model3.build_model(params)
+model3 = CnnSolver(class_mode, 'ethnic3')
+model3.build_model_cnn_cnn_pool(params3)
 model2.train(training_set, test_set,  nr_of_epochs, steps_per_epoch, iFcallbacks=True, do_plots=False)
 
 # model3.load_model( loss = 'categorical_crossentropy', metrics = ['accuracy'])

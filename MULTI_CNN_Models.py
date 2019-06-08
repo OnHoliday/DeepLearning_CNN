@@ -27,29 +27,35 @@ class Group12Net:
 
         # CONV => RELU => POOL
         x = Conv2D(32, (3, 3), padding="same")(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization(axis=chanDim)(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(3, 3))(x)
-        # x = Dropout(0.25)(x)
+        x = Dropout(0.25)(x)
+
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = MaxPooling2D(pool_size=(3, 3))(x)
+        x = Dropout(0.25)(x)
 
         # (CONV => RELU) * 2 => POOL
-        # x = Conv2D(64, (3, 3), padding="same")(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization(axis=chanDim)(x)
-        # x = Conv2D(64, (3, 3), padding="same")(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization(axis=chanDim)(x)
-        # x = MaxPooling2D(pool_size=(2, 2))(x)
-        # x = Dropout(0.25)(x)
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = MaxPooling2D(pool_size=(2, 2))(x)
+        x = Dropout(0.25)(x)
 
         # define a branch of output layers for the number of different
         # clothing categories (i.e., shirts, jeans, dresses, etc.)
         x = Flatten()(x)
         x = Dense(256)(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization()(x)
-        x = Dense(numGender)(x)
-        x = Activation(finalAct, name="gender_output")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization()(x)
+        x = Dense(1)(x)
+        x = Activation('sigmoid', name="gender_output")(x)
 
         # return the category prediction sub-network
         return x
@@ -58,26 +64,38 @@ class Group12Net:
 
         x = inputs
         # CONV => RELU => POOL
-        # x = Conv2D(16, (3, 3), padding="same")(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization(axis=chanDim)(x)
-        # x = MaxPooling2D(pool_size=(3, 3))(x)
-        # x = Dropout(0.25)(x)
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = MaxPooling2D(pool_size=(3, 3))(x)
+        x = Dropout(0.25)(x)
+
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = MaxPooling2D(pool_size=(3, 3))(x)
+        x = Dropout(0.25)(x)
 
         # CONV => RELU => POOL
         x = Conv2D(32, (3, 3), padding="same")(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization(axis=chanDim)(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
-        # x = Dropout(0.25)(x)
+        x = Dropout(0.25)(x)
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = MaxPooling2D(pool_size=(2, 2))(x)
+        x = Dropout(0.25)(x)
+
 
         # define a branch of output layers for the number of different
         # colors (i.e., red, black, blue, etc.)
         x = Flatten()(x)
         x = Dense(128)(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization()(x)
-        # x = Dropout(0.35)(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization()(x)
+        x = Dropout(0.35)(x)
         x = Dense(numRace)(x)
         x = Activation(finalAct, name="race_output")(x)
 
@@ -88,28 +106,40 @@ class Group12Net:
 
         x = inputs
         # CONV => RELU => POOL
-        x = Conv2D(16, (3, 3), padding="same")(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization(axis=chanDim)(x)
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(3, 3))(x)
-        # x = Dropout(0.25)(x)
+        x = Dropout(0.25)(x)
 
         # CONV => RELU => POOL
         x = Conv2D(32, (3, 3), padding="same")(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization(axis=chanDim)(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
-        # x = Dropout(0.25)(x)
+        x = Dropout(0.25)(x)
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = MaxPooling2D(pool_size=(3, 3))(x)
+        x = Dropout(0.25)(x)
+
+        # CONV => RELU => POOL
+        x = Conv2D(32, (3, 3), padding="same")(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization(axis=chanDim)(x)
+        x = MaxPooling2D(pool_size=(2, 2))(x)
+        x = Dropout(0.25)(x)
 
         # define a branch of output layers for the number of different
         # colors (i.e., red, black, blue, etc.)
         x = Flatten()(x)
         x = Dense(128)(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization()(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization()(x)
         x = Dense(64)(x)
-        # x = Activation("relu")(x)
-        # x = BatchNormalization()(x)
+        x = Activation("relu")(x)
+        x = BatchNormalization()(x)
         x = Dense(1, name="age_output", kernel_initializer='normal', activation='linear')(x)
         return x
 
@@ -157,17 +187,13 @@ class Group12Net:
         save_model(self.model, self.model_name)
 
     def _compile_model(self):
-        EPOCHS = 50
-        INIT_LR = 1e-3
-        BS = 32
-        IMAGE_DIMS = (64, 64, 3)
         losses = {
             "gender_output": "binary_crossentropy",
             "race_output": "categorical_crossentropy",
             "age_output": "mean_absolute_error",
         }
         lossWeights = {"gender_output": 1.0, "race_output": 1.0, "age_output": 1.0}
-        opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+        opt = Adam()
 
         self.model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights, metrics={"gender_output":"accuracy", "race_output":"accuracy","age_output":"mae"})
 
@@ -199,7 +225,7 @@ def built_multi(n_races,im_width):
     _ = Dropout(0.3)(_)
     _ = Dense(units=128, activation='relu')(_)
     _ = Dropout(0.3)(_)
-    age_output = Dense(units=1, activation='sigmoid', name='age_output')(_)
+    age_output = Dense(units=1, name='age_output')(_)
 
     # for race prediction
     _ = Dense(units=256, activation='relu')(bottleneck)
